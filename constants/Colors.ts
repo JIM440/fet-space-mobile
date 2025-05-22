@@ -1,26 +1,34 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
+export const COLORS = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    primaryBase: "#008BCC",
+    primary10: "#33AADD",
+    backgroundMain: "#FFFFFF",
+    backgroundNeutral: "#EBEBF2",
+    backgroundSecondary: "#F0F0F0",
+    backgroundLight: "#98CCE3",
+    neutralTextPrimary: "#1A1A1A",
+    neutralTextSecondary: "#2F2F2F",
+    neutralTextTertiary: "#4A4A4A",
+    neutralBorder: "#EBEBF2",
+    success: "#34C759",
+    error: "#FF3830",
+    white: "#F5F5F5",
+    black: "#1A1A1A"
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+    primaryBase: "#008BCC",
+    primary10: "#0378B3",
+    backgroundMain: "#1A1A1A",
+    backgroundNeutral: "#303030",
+    backgroundSecondary: "#202020",
+    backgroundLight: "#1E3A4D",
+    neutralTextPrimary: "#F5F5F5",
+    neutralTextSecondary: "#C4C4C4",
+    neutralTextTertiary: "#A1A1A1",
+    neutralBorder: "#303030",
+    success: "#34C759",
+    error: "#B3261E",
+    white: "#F5F5F5",
+    black: "#1A1A1A"
+  }
 };
