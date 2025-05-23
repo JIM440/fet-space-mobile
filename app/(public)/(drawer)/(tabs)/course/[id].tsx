@@ -55,7 +55,7 @@ const CourseDetails = () => {
         />
         <View style={{ paddingHorizontal: 20, paddingVertical: 20, gap: 16 }}>
           <ThemedText variant="h3" style={{ color: colors.neutralTextPrimary }}>
-            {course.courseCode + ' ' + course.title}
+            {course.courseCode + " " + course.title}
           </ThemedText>
           {course.description && <ThemedText>{course.description}</ThemedText>}
           <ThemedText>Created at: 12/12/2023</ThemedText>
@@ -103,7 +103,7 @@ const CourseDetails = () => {
           ))}
         </ScrollView>
         {/* Tab Content Placeholder */}
-        <View style={{ paddingTop: 40 }}>
+        <View style={{ paddingTop: 30 }}>
           {activeTab === "Announcements" && <Announcements />}
           {activeTab === "Content" && <Content />}
           {activeTab === "Assignments" && <Assignments />}

@@ -7,12 +7,7 @@ import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
 import React, { useState } from "react";
-import {
-  Dimensions,
-  Modal,
-  StyleSheet,
-  View
-} from "react-native";
+import { Dimensions, Modal, StyleSheet, View } from "react-native";
 
 interface AddCourseModalProps {
   visible: boolean;
@@ -70,7 +65,7 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
           value={title}
           onChangeText={setTitle}
           onValidChange={setIsTitleValid}
-          />
+        />
         <InputDescription
           label="Description"
           value={description}

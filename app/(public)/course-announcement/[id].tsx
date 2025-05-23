@@ -3,13 +3,13 @@ import BackHeader from '@/components/commons/navigation/BackHeader'
 import ThemedText from '@/components/commons/typography/ThemedText'
 import React from 'react'
 
-const AboutFet = () => {
+const CourseAnnouncement = () => {
   return (
     <PageContainers>
-      <BackHeader title='About FET' />
-      <ThemedText>About Fet</ThemedText>
+        <BackHeader title='' />
+      <ThemedText>course announcements</ThemedText>
     </PageContainers>
   )
 }
 
-export default AboutFet
+export default CourseAnnouncement

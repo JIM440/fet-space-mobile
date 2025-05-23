@@ -1,3 +1,4 @@
+import AttachFileBtn from "@/components/commons/buttons/AttachFileBtn";
 import Button from "@/components/commons/buttons/Button";
 import PageContainers from "@/components/commons/containers/PageContainer";
 import InputDescription from "@/components/commons/inputs/InputDescription";
@@ -61,12 +62,7 @@ const AddCourseAnnouncement = () => {
           onValidChange={setIsDescriptionValid}
           placeholder="Enter announcement description"
         />
-        <Button
-          title="Upload File"
-          variant="primary"
-          onPress={handleFileUpload}
-          style={{ marginBottom: 16 }}
-        />
+        <AttachFileBtn title="Attach Files" onPress={handleFileUpload} />
         {files.length > 0 && (
           <View style={{ marginBottom: 16 }}>
             <ThemedText

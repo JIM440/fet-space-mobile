@@ -2,24 +2,19 @@ import AddCommentInput from "@/components/commons/inputs/AddCommentInput";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
-import { router } from "expo-router";
+import { RegularAnnouncementProps } from "@/types";
+import { RelativePathString, router } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
-interface RegularAnnouncementProps {
-  title: string;
-  content: string;
-  date: string;
-  comments?: number;
-  author: { name: string; image: string };
-}
-
 const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
+  id,
   title,
   content,
   date,
   comments,
   author,
+  announcementType,
 }) => {
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
@@ -33,8 +28,11 @@ const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
     <Pressable
       style={[styles.item, { backgroundColor: colors.backgroundMain }]}
       onPress={() => {
-        router.push("/login");
-        alert(title);
+        router.push(
+          (announcementType === "course"
+            ? `/course-announcement/${id}`
+            : `/announcement/${id}`) as RelativePathString
+        );
       }}
     >
       <View style={styles.header}>
@@ -43,7 +41,7 @@ const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
           style={{ ...styles.badge, backgroundColor: colors.backgroundNeutral }}
         />
         <View>
-          <ThemedText variant="h4">Official Notice</ThemedText>
+          <ThemedText variant="h4">{author.name}</ThemedText>
           <ThemedText variant="small">{formatDate(date)}</ThemedText>
         </View>
       </View>
@@ -69,7 +67,7 @@ const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
             textAlign: "right",
           }}
         >
-          {comments} comments
+          {comments || 0} comments
         </ThemedText>
       )}
     </Pressable>

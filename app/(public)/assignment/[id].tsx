@@ -3,13 +3,13 @@ import BackHeader from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import React from "react";
 
-const HelpAndSupport = () => {
+const AssignmentDetails = () => {
   return (
     <PageContainers>
-      <BackHeader title="Help And Support" />
-      <ThemedText>Help And Support</ThemedText>
+      <BackHeader title="" />
+      <ThemedText>Assignment Details</ThemedText>
     </PageContainers>
   );
 };
 
-export default HelpAndSupport;
+export default AssignmentDetails;

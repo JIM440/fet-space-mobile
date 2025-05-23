@@ -2,17 +2,13 @@ import AddCommentInput from "@/components/commons/inputs/AddCommentInput";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
-import { router } from "expo-router";
+import { RelativePathString, router } from "expo-router";
 import React, { useState } from "react";
-import {
-    Image,
-    Pressable,
-    StyleSheet,
-    View
-} from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import PollOption from "./PollOption";
 
 interface PollAnnouncementProps {
+  id: string;
   title: string;
   content: string;
   date: string;
@@ -22,9 +18,11 @@ interface PollAnnouncementProps {
   totalVotes: number;
   allowMultipleAnswers: boolean;
   index: number;
+  announcementType: string;
 }
 
 const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
+  id,
   title,
   content,
   date,
@@ -34,6 +32,7 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
   totalVotes,
   allowMultipleAnswers,
   index,
+  announcementType,
 }) => {
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
@@ -81,8 +80,7 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
     <Pressable
       style={[styles.item, { backgroundColor: colors.backgroundMain }]}
       onPress={() => {
-        router.push("/login");
-        alert(title);
+        router.push((announcementType === 'course' ? `/course-announcement/${id}` : `/announcement/${id}`) as RelativePathString)
       }}
     >
       <View style={styles.header}>
@@ -91,7 +89,7 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
           style={{ ...styles.badge, backgroundColor: colors.backgroundNeutral }}
         />
         <View>
-          <ThemedText variant="h4">Official Notice</ThemedText>
+          <ThemedText variant="h4">{author.name}</ThemedText>
           <ThemedText variant="small">{formatDate(date)}</ThemedText>
         </View>
       </View>

@@ -1,3 +1,4 @@
+import AttachFileBtn from "@/components/commons/buttons/AttachFileBtn";
 import Button from "@/components/commons/buttons/Button";
 import PageContainers from "@/components/commons/containers/PageContainer";
 import InputDescription from "@/components/commons/inputs/InputDescription";
@@ -9,10 +10,9 @@ import { useTheme } from "@/hooks/useThemeColor";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 const AddAssignment = () => {
-  const { width, height } = Dimensions.get("screen");
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
   const router = useRouter();
@@ -25,7 +25,10 @@ const AddAssignment = () => {
 
   const handleFileUpload = () => {
     // Simulate file upload (replace with actual file picker in production)
-    const newFile = { name: `file-${files.length + 1}.pdf`, type: "application/pdf" };
+    const newFile = {
+      name: `file-${files.length + 1}.pdf`,
+      type: "application/pdf",
+    };
     setFiles([...files, newFile]);
   };
 
@@ -35,7 +38,7 @@ const AddAssignment = () => {
   };
 
   return (
-    <PageContainers    >
+    <PageContainers>
       <BackHeader title="Add Assignment" />
       <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
         <InputTitle
@@ -52,29 +55,36 @@ const AddAssignment = () => {
           onValidChange={setIsDescriptionValid}
           placeholder="Enter assignment description"
         />
-        <ThemedText variant="body" style={{ color: colors.neutralTextSecondary, marginBottom: 4 }}>
-          Due Date
+        <ThemedText
+          variant="body"
+          style={{ color: colors.neutralTextSecondary, marginBottom: 4 }}
+        >
+          Due Date:
         </ThemedText>
         <DateTimePicker
           value={dueDate}
           mode="date"
           display="default"
-          onChange={(event, selectedDate) => setDueDate(selectedDate || dueDate)}
+          onChange={(event, selectedDate) =>
+            setDueDate(selectedDate || dueDate)
+          }
           style={{ marginBottom: 16 }}
         />
-        <Button
-          title="Upload File"
-          variant="primary"
-          onPress={handleFileUpload}
-          style={{ marginBottom: 16 }}
-        />
+        <AttachFileBtn title="Attach Files" onPress={handleFileUpload} />
         {files.length > 0 && (
           <View style={{ marginBottom: 16 }}>
-            <ThemedText variant="body" style={{ color: colors.neutralTextSecondary }}>
+            <ThemedText
+              variant="body"
+              style={{ color: colors.neutralTextSecondary }}
+            >
               Attached Files:
             </ThemedText>
             {files.map((file, index) => (
-              <ThemedText key={index} variant="small" style={{ color: colors.neutralTextPrimary }}>
+              <ThemedText
+                key={index}
+                variant="small"
+                style={{ color: colors.neutralTextPrimary }}
+              >
                 {file.name} ({file.type})
               </ThemedText>
             ))}
@@ -90,14 +100,5 @@ const AddAssignment = () => {
     </PageContainers>
   );
 };
-
-const styles = StyleSheet.create({
-  pageView: {
-    flex: 1,
-    padding: 20,
-    alignItems: "center",
-    paddingTop: 80,
-  },
-});
 
 export default AddAssignment;

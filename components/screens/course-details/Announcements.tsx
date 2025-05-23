@@ -1,6 +1,6 @@
-import renderAnnouncements from "@/components/commons/cards/renderAnnouncements";
+import renderAnnouncements from "@/components/commons/cards/announcements/renderAnnouncements";
 import { COLORS } from "@/constants/colors";
-import { announcementsData } from "@/constants/static-data/announcements";
+import { courseAnnouncementsData } from "@/constants/static-data/announcements";
 import { useTheme } from "@/hooks/useThemeColor";
 import React from "react";
 import { View } from "react-native";
@@ -11,7 +11,7 @@ const Announcements = () => {
   return (
     <View>
       <View style={{ backgroundColor: colors.backgroundSecondary, gap: 20 }}>
-        {announcementsData.map(renderAnnouncements)}
+        {courseAnnouncementsData.map(renderAnnouncements)}
       </View>
     </View>
   );

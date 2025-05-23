@@ -1,4 +1,5 @@
 import Button from "@/components/commons/buttons/Button";
+import PageContainers from "@/components/commons/containers/PageContainer";
 import ThemedInput from "@/components/commons/inputs/ThemedInput";
 import BackHeader from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
@@ -6,7 +7,14 @@ import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Switch, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const AddPollAnnouncement = () => {
   const { width, height } = Dimensions.get("screen");
@@ -60,16 +68,9 @@ const AddPollAnnouncement = () => {
   };
 
   return (
-    <View
-      style={{
-        ...styles.pageView,
-        width,
-        height,
-        backgroundColor: colors.backgroundMain,
-      }}
-    >
+    <PageContainers>
       <BackHeader title="Create Poll" />
-      <ScrollView style={{ width: "100%" }}>
+      <ScrollView style={{ width: "100%", padding: 20 }}>
         <ThemedInput
           label="Question"
           value={question}
@@ -91,38 +92,45 @@ const AddPollAnnouncement = () => {
             style={{ marginBottom: 8 }}
           />
         ))}
-        <Button
-          title="Add Option"
-          variant="primary"
+        {/* <Button
+          title="Add Option +"
+        /> */}
+        <TouchableOpacity
+          style={{
+            marginBottom: 16,
+            borderRadius: 8,
+            alignItems: "flex-start",
+            backgroundColor: colors.backgroundNeutral,
+            padding: 16, paddingVertical: 12
+          }}
           onPress={handleAddOption}
-          style={{ marginBottom: 16 }}
-        />
+        >
+          <ThemedText>Add Option +</ThemedText>
+        </TouchableOpacity>
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 16,
+            marginVertical: 16,
           }}
         >
           <ThemedText
             variant="body"
             style={{ color: colors.neutralTextSecondary, marginRight: 10 }}
           >
-            Allow multiple answers
+            Allow multiple answers:
           </ThemedText>
           <Switch
             value={allowMultiple}
             onValueChange={setAllowMultiple}
-            trackColor={{ false: colors.neutralBorder, true: colors.primaryBase }}
+            trackColor={{
+              false: colors.neutralBorder,
+              true: colors.primaryBase,
+            }}
             thumbColor={colors.neutralTextPrimary}
           />
         </View>
-        <Button
-          title="Upload File"
-          variant="primary"
-          onPress={handleFileUpload}
-          style={{ marginBottom: 16 }}
-        />
+        {/* <AttachFileBtn title="Attach File" onPress={handleFileUpload} /> */}
         {files.length > 0 && (
           <View style={{ marginBottom: 16 }}>
             <ThemedText
@@ -150,7 +158,7 @@ const AddPollAnnouncement = () => {
           style={{ marginTop: 40 }}
         />
       </ScrollView>
-    </View>
+    </PageContainers>
   );
 };
 
