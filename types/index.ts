@@ -15,7 +15,7 @@ export interface fileProps {
   id?: string | number;
   name: string;
   type: "pdf" | "docx" | "ppt" | "img" | string;
-  date: string;
+  date?: string;
   size: string;
   pages: string | number;
 }
@@ -43,4 +43,11 @@ export interface RegularAnnouncementProps {
   announcementType: 'course' | 'general' | string;
   comments?: number;
   author: { name: string; image: string };
+}
+
+export interface Comment {
+  id: number;
+  text: string;
+  author: string;
+  timestamp: string;
 }

@@ -55,10 +55,15 @@ const CourseDetails = () => {
         />
         <View style={{ paddingHorizontal: 20, paddingVertical: 20, gap: 16 }}>
           <ThemedText variant="h3" style={{ color: colors.neutralTextPrimary }}>
-            {course.courseCode + " " + course.title}
+            {course.courseCode + ": " + course.title}
           </ThemedText>
           {course.description && <ThemedText>{course.description}</ThemedText>}
-          <ThemedText>Created at: 12/12/2023</ThemedText>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <ThemedText variant="caption">Created at: 12/12/2023</ThemedText>
+            <ThemedText variant="caption">350 Students</ThemedText>
+          </View>
         </View>
         {/* Tab Bar */}
         <ScrollView

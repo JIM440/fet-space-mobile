@@ -22,8 +22,14 @@ const AssignmentCard = ({ assignment }: { assignment: assignmentProps }) => {
         router.push(`/assignment/${assignment.id}` as RelativePathString);
       }}
     >
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ maxWidth: "90%" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <View style={{ maxWidth: "80%" }}>
           <ThemedText variant="h4" numberOfLines={1}>
             {assignment.title}
           </ThemedText>
@@ -31,7 +37,11 @@ const AssignmentCard = ({ assignment }: { assignment: assignmentProps }) => {
             {assignment.description}
           </ThemedText>
         </View>
-        <ThemedText variant="caption" numberOfLines={1}>
+        <ThemedText
+          variant="caption"
+          numberOfLines={1}
+          style={{ width: "auto" }}
+        >
           {assignment.date}
         </ThemedText>
       </View>

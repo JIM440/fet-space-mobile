@@ -22,6 +22,7 @@ const TabHeader = () => {
         paddingHorizontal: 20,
         flexDirection: "row",
         justifyContent: "space-between",
+        backgroundColor: colors.backgroundMain
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 18 }}>

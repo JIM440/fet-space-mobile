@@ -3,7 +3,8 @@ import { useTheme } from "@/hooks/useThemeColor";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import ThemedText from "../typography/ThemedText";
 
 interface BackHeaderProps {
   title: string;
@@ -24,7 +25,7 @@ export const BackHeader: React.FC<BackHeaderProps> = ({ title = "" }) => {
     >
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <MaterialIcons name="arrow-back" size={24} color={colors.neutralTextSecondary} />
-        <Text style={{...styles.title, color: colors.neutralTextSecondary}}>{title}</Text>
+        <ThemedText style={{...styles.title, color: colors.neutralTextSecondary}} numberOfLines={1}>{title}</ThemedText>
       </TouchableOpacity>
     </View>
   );

@@ -82,12 +82,12 @@ const Profile = () => {
                 Njeck Dorothy Ambe
               </ThemedText>
               <ThemedText
-                style={{ fontSize: 15, color: colors.neutralTextPrimary }}
+                style={{ fontSize: 15, color: colors.neutralTextSecondary }}
               >
                 FE21A504
               </ThemedText>
               <ThemedText
-                style={{ fontSize: 15, color: colors.neutralTextPrimary }}
+                style={{ fontSize: 15, color: colors.neutralTextSecondary }}
               >
                 B.eng Computer Engineering
               </ThemedText>

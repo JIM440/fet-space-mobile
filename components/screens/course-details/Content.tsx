@@ -5,7 +5,8 @@ import { View } from "react-native";
 
 const Content = () => {
   return (
-    <View style={{ flex: 1, gap: 16, marginBottom: 20 }}>
+    <View style={{ flex: 1, gap: 24, marginBottom: 20,         paddingHorizontal: 20,
+ }}>
       {files.map((file, index) => (
         <FileCard key={index} file={file} />
       ))}

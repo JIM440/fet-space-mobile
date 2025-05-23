@@ -41,6 +41,7 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
       transparent={true}
       visible={visible}
       onRequestClose={handleClose}
+      style={{ backgroundColor: colors.backgroundMain }}
     >
       <View
         style={{
@@ -86,7 +87,6 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
 const styles = StyleSheet.create({
   modalView: {
     flex: 1,
-    backgroundColor: "red",
     padding: 20,
     alignItems: "center",
     paddingTop: 80,

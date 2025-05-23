@@ -11,7 +11,6 @@ const FileCard = ({ file }: { file: fileProps }) => {
   return (
     <View
       style={{
-        paddingHorizontal: 20,
         paddingVertical: 0,
         flexDirection: "row",
         gap: 8,
@@ -30,7 +29,7 @@ const FileCard = ({ file }: { file: fileProps }) => {
         <Image source={require("@/assets/icons/ppt.svg")} />
       )}
       <View style={{ flex: 1 }}>
-        <ThemedText>{file.name}</ThemedText>
+        <ThemedText numberOfLines={2}>{file.name}</ThemedText>
         <View style={{ flexDirection: "row", gap: 16 }}>
           <ThemedText
             variant="caption"
@@ -44,12 +43,14 @@ const FileCard = ({ file }: { file: fileProps }) => {
           >
             {file.size}
           </ThemedText>
-          <ThemedText
-            variant="caption"
-            style={{ color: colors.neutralTextTertiary }}
-          >
-            {file.date}
-          </ThemedText>
+          {file.date && (
+            <ThemedText
+              variant="caption"
+              style={{ color: colors.neutralTextTertiary }}
+            >
+              {file.date}
+            </ThemedText>
+          )}
         </View>
       </View>
     </View>

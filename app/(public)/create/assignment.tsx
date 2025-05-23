@@ -7,10 +7,18 @@ import BackHeader from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const AddAssignment = () => {
   const { resolvedTheme } = useTheme();
@@ -22,9 +30,9 @@ const AddAssignment = () => {
   const [files, setFiles] = useState<{ name: string; type: string }[]>([]);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isDescriptionValid, setIsDescriptionValid] = useState(true);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleFileUpload = () => {
-    // Simulate file upload (replace with actual file picker in production)
     const newFile = {
       name: `file-${files.length + 1}.pdf`,
       type: "application/pdf",
@@ -33,14 +41,104 @@ const AddAssignment = () => {
   };
 
   const handleSubmit = () => {
-    // Handle submission logic (e.g., API call)
     router.back();
+  };
+
+  const getMinimumDate = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const selectedDate = new Date(
+      dueDate.getFullYear(),
+      dueDate.getMonth(),
+      dueDate.getDate()
+    );
+
+    // If the selected date is today, restrict to current time or later
+    if (selectedDate.getTime() === today.getTime()) {
+      return now; // Restrict to current time or later today
+    }
+    // For future dates, allow any time (midnight of that date)
+    return new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate()
+    );
+  };
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === "android") {
+      if (event.type === "set" && selectedDate) {
+        // Date selected, now open time picker
+        setDueDate(selectedDate);
+        try {
+          DateTimePickerAndroid.open({
+            value: selectedDate,
+            onChange: handleTimeChange,
+            mode: "time",
+            minimumDate: getMinimumDate(),
+            display: "default",
+          });
+        } catch (error) {
+          console.error("Error opening TimePicker:", error);
+        }
+      } else {
+        // Dismissed date picker
+        DateTimePickerAndroid.dismiss("date");
+      }
+    } else {
+      // iOS: Handle datetime picker
+      setShowDatePicker(false);
+      if (selectedDate && event.type !== "dismissed") {
+        setDueDate(selectedDate);
+      }
+    }
+  };
+
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
+    if (event.type === "set" && selectedTime) {
+      setDueDate(selectedTime);
+    }
+    // Dismiss time picker explicitly for Android
+    if (Platform.OS === "android") {
+      DateTimePickerAndroid.dismiss("time");
+    }
+  };
+
+  const showDateTimePicker = () => {
+    if (Platform.OS === "android") {
+      try {
+        DateTimePickerAndroid.open({
+          value: dueDate,
+          onChange: handleDateChange,
+          mode: "date",
+          minimumDate: new Date(), // Restrict to future dates
+          display: "default",
+        });
+      } catch (error) {
+        console.error("Error opening DatePicker:", error);
+      }
+    } else {
+      setShowDatePicker(true);
+    }
+  };
+
+  const formatDateTime = (date: Date) => {
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
   };
 
   return (
     <PageContainers>
       <BackHeader title="Add Assignment" />
-      <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
+      <ScrollView
+        style={{ width: "100%", paddingHorizontal: 20, marginTop: 30 }}
+      >
         <InputTitle
           label="Title (Optional)"
           value={title}
@@ -59,17 +157,32 @@ const AddAssignment = () => {
           variant="body"
           style={{ color: colors.neutralTextSecondary, marginBottom: 4 }}
         >
-          Due Date:
+          Due Date and Time:
         </ThemedText>
-        <DateTimePicker
-          value={dueDate}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) =>
-            setDueDate(selectedDate || dueDate)
-          }
-          style={{ marginBottom: 16 }}
-        />
+        <TouchableOpacity
+          style={[
+            styles.datePickerButton,
+            {
+              borderColor: colors.neutralBorder,
+              backgroundColor: colors.backgroundNeutral,
+            },
+          ]}
+          onPress={showDateTimePicker}
+        >
+          <ThemedText style={{ color: colors.neutralTextPrimary }}>
+            {formatDateTime(dueDate)}
+          </ThemedText>
+        </TouchableOpacity>
+        {showDatePicker && Platform.OS === "ios" && (
+          <DateTimePicker
+            value={dueDate}
+            mode="datetime"
+            display="default"
+            onChange={handleDateChange}
+            minimumDate={getMinimumDate()}
+            style={{ marginBottom: 16 }}
+          />
+        )}
         <AttachFileBtn title="Attach Files" onPress={handleFileUpload} />
         {files.length > 0 && (
           <View style={{ marginBottom: 16 }}>
@@ -100,5 +213,14 @@ const AddAssignment = () => {
     </PageContainers>
   );
 };
+
+const styles = StyleSheet.create({
+  datePickerButton: {
+    padding: 12,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+});
 
 export default AddAssignment;

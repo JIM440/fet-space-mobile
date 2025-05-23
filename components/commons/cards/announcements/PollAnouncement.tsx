@@ -2,7 +2,7 @@ import AddCommentInput from "@/components/commons/inputs/AddCommentInput";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
-import { RelativePathString, router } from "expo-router";
+import { RelativePathString, router, usePathname } from "expo-router";
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import PollOption from "./PollOption";
@@ -34,11 +34,14 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
   index,
   announcementType,
 }) => {
+  const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
   const [pollSelections, setPollSelections] = useState<{
     [key: number]: string[];
   }>({});
+
+  const isAnnouncementDetailPath = pathname.includes("/announcement/") || pathname.includes("/course-announcement")
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -80,8 +83,15 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
     <Pressable
       style={[styles.item, { backgroundColor: colors.backgroundMain }]}
       onPress={() => {
-        router.push((announcementType === 'course' ? `/course-announcement/${id}` : `/announcement/${id}`) as RelativePathString)
+        router.push(
+          (announcementType === "course"
+            ? `/course-announcement/${id}`
+            : `/announcement/${id}`) as RelativePathString
+        );
       }}
+      disabled={
+        isAnnouncementDetailPath
+      }
     >
       <View style={styles.header}>
         <Image
@@ -117,7 +127,7 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
           />
         ))}
       </View>
-      {comments === 0 || !comments ? (
+      {(comments === 0 || !comments) && !isAnnouncementDetailPath  ? (
         <AddCommentInput value="" onChangeText={() => {}} disabled={true} />
       ) : (
         <ThemedText

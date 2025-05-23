@@ -57,7 +57,7 @@ const ThemedInput: React.FC<ThemedInputProps> = ({
         variant="body"
         style={{ color: colors.neutralTextSecondary, marginBottom: 6 }}
       >
-        {label}:
+        {!!label ? label + ' :' : ''}
       </ThemedText>
       <TextInput
         style={{ ...inputStyle, color: colors.neutralTextSecondary }}

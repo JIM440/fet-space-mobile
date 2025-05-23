@@ -47,7 +47,7 @@ const AddCourseAnnouncement = () => {
   return (
     <PageContainers>
       <BackHeader title="Create Announcement" />
-      <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
+      <ScrollView contentContainerStyle={{ width: "100%", paddingHorizontal: 20,marginTop: 30 }}>
         <InputTitle
           label="Title (Optional)"
           value={title}

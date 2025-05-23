@@ -14,7 +14,7 @@ const AnnouncementsScreen = () => {
 
   return (
     <PageContainers>
-      <ScrollView>
+      <ScrollView stickyHeaderHiddenOnScroll={true} stickyHeaderIndices={[0]}>
         <TabHeader />
         <View style={{ padding: 10 }}>
           <ThemedText variant="h3">Announcements</ThemedText>

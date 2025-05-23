@@ -36,8 +36,8 @@ const ModalLayout = () => {
             backgroundColor: colors.backgroundSecondary,
           },
           drawerInactiveTintColor: colors.neutralTextSecondary,
-          drawerActiveTintColor: colors.primaryBase,
-          drawerActiveBackgroundColor: colors.backgroundLight,
+          drawerActiveTintColor: colors.neutralTextSecondary,
+          drawerActiveBackgroundColor: "transparent",
         }}
         drawerContent={(props) => (
           <>
@@ -54,7 +54,7 @@ const ModalLayout = () => {
             drawerItemStyle: { display: "none" },
           }}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="upcoming-deadlines"
           options={{
             drawerLabel: "Upcoming Deadlines",
@@ -65,6 +65,24 @@ const ModalLayout = () => {
                   focused
                     ? require("@/assets/icons/upcoming_deadlines_active.svg")
                     : resolvedTheme === "light"
+                    ? require("@/assets/icons/upcoming_deadlines.svg")
+                    : require("@/assets/icons/upcoming_deadlines_dark.svg")
+                }
+                color={color}
+                width={size}
+              />
+            ),
+          }}
+        /> */}
+        <Drawer.Screen
+          name="upcoming-deadlines"
+          options={{
+            drawerLabel: "Upcoming Deadlines",
+            title: "Upcoming Deadlines",
+            drawerIcon: ({ color, focused, size }) => (
+              <LocalSvg
+                asset={
+                  resolvedTheme === "light"
                     ? require("@/assets/icons/upcoming_deadlines.svg")
                     : require("@/assets/icons/upcoming_deadlines_dark.svg")
                 }
@@ -88,7 +106,7 @@ const ModalLayout = () => {
             ),
           }}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="curriculums"
           options={{
             drawerLabel: "Curriculums",
@@ -99,6 +117,24 @@ const ModalLayout = () => {
                   focused
                     ? require("@/assets/icons/curriculum_active.svg")
                     : resolvedTheme === "light"
+                    ? require("@/assets/icons/curriculum.svg")
+                    : require("@/assets/icons/curriculum_dark.svg")
+                }
+                color={color}
+                width={size}
+              />
+            ),
+          }}
+        /> */}
+        <Drawer.Screen
+          name="curriculums"
+          options={{
+            drawerLabel: "Curriculums",
+            title: "Curriculums",
+            drawerIcon: ({ color, focused, size }) => (
+              <LocalSvg
+                asset={
+                  resolvedTheme === "light"
                     ? require("@/assets/icons/curriculum.svg")
                     : require("@/assets/icons/curriculum_dark.svg")
                 }

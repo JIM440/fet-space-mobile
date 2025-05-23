@@ -1,15 +1,110 @@
 import PageContainers from "@/components/commons/containers/PageContainer";
 import BackHeader from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
-import React from "react";
+import ItemLabelAndValue from "@/components/screens/profile/ItemLabelAndValue";
+import ProfileOptionsModal from "@/components/screens/profile/ProfileOptionsModal";
+import { COLORS } from "@/constants/colors";
+import { useTheme } from "@/hooks/useThemeColor";
+import React, { useState } from "react";
+import { Image, View } from "react-native";
 
-const UserDetails = () => {
+const UserProfile = () => {
+  const { resolvedTheme } = useTheme();
+  const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
   return (
     <PageContainers>
-      <BackHeader title="" />
-      <ThemedText>User Details</ThemedText>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-start",
+        }}
+      >
+        {/* tab header */}
+        <BackHeader title='Nfor Lille' />
+        {/* profile items container */}
+        <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
+          {/* row 1 */}
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 16,
+              alignItems: "center",
+            }}
+          >
+            {/* profile image */}
+            <View
+              style={{
+                backgroundColor: colors.backgroundSecondary,
+                width: 105,
+                height: 105,
+                borderRadius: 120,
+                padding: 4,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Image
+                source={require("@/assets/images/candace_owens.jpg")}
+                style={{
+                  backgroundColor: colors.backgroundNeutral,
+                  width: 100,
+                  height: 100,
+                  borderRadius: 120,
+                }}
+              />
+            </View>
+
+            <View style={{ gap: 6 }}>
+              <ThemedText
+                variant="h3"
+                style={{ color: colors.neutralTextPrimary }}
+              >
+                Njeck Dorothy Ambe
+              </ThemedText>
+              <ThemedText
+                style={{ fontSize: 15, color: colors.neutralTextSecondary }}
+              >
+                FE21A504
+              </ThemedText>
+              <ThemedText
+                style={{ fontSize: 15, color: colors.neutralTextSecondary }}
+              >
+                B.eng Computer Engineering
+              </ThemedText>
+            </View>
+          </View>
+          {/* row 2 */}
+          <View style={{ paddingHorizontal: 20, paddingVertical: 24, gap: 16 }}>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <ItemLabelAndValue label="Level:" value="200" />
+              <ItemLabelAndValue label="Gender:" value="Male" />
+            </View>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <ItemLabelAndValue
+                label="Institutional Email:"
+                value="njeckdorothy@ubuea.cm"
+              />
+              <ItemLabelAndValue
+                label="Alternative Email:"
+                value="njeckdorothy@gmail.com"
+              />
+            </View>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <ItemLabelAndValue label="Nationality:" value="Cameroon" />
+              <ItemLabelAndValue label="Phone:" value="675829432" />
+            </View>
+          </View>
+        </View>
+      </View>
+      <ProfileOptionsModal visible={modalVisible} onClose={toggleModal} />
     </PageContainers>
   );
 };
 
-export default UserDetails;
+export default UserProfile;
