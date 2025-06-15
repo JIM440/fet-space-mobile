@@ -20,7 +20,7 @@ const FloatingAddItemBtn: React.FC<FloatingAddItemBtnProps> = ({ onPress }) => {
       ]}
       onPress={onPress}
     >
-      <Entypo name="plus" size={24} color={colors.neutralTextPrimary} />
+      <Entypo name="plus" size={24} color={colors.white} />
     </TouchableOpacity>
   );
 };

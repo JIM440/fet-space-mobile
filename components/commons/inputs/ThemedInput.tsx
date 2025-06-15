@@ -60,7 +60,7 @@ const ThemedInput: React.FC<ThemedInputProps> = ({
         {!!label ? label + ' :' : ''}
       </ThemedText>
       <TextInput
-        style={{ ...inputStyle, color: colors.neutralTextSecondary }}
+        style={{ ...inputStyle, color: colors.neutralTextPrimary }}
         placeholder={placeholder}
         placeholderTextColor={colors.neutralTextSecondary}
         value={value}

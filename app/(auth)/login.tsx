@@ -1,53 +1,77 @@
-import Button from "@/components/commons/buttons/Button";
-import PageContainers from "@/components/commons/containers/PageContainer";
-import InputEmail from "@/components/commons/inputs/auth-inputs/InputEmail";
-import InputMatricule from "@/components/commons/inputs/auth-inputs/InputMatricule";
-import InputPassword from "@/components/commons/inputs/auth-inputs/InputPassword";
-import ThemedText from "@/components/commons/typography/ThemedText";
-import { COLORS } from "@/constants/colors";
-import { useTheme } from "@/hooks/useThemeColor";
-import { Entypo } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
+import Button from '@/components/commons/buttons/Button';
+import PageContainers from '@/components/commons/containers/PageContainer';
+import InputEmail from '@/components/commons/inputs/auth-inputs/InputEmail';
+import InputMatricule from '@/components/commons/inputs/auth-inputs/InputMatricule';
+import InputPassword from '@/components/commons/inputs/auth-inputs/InputPassword';
+import { OverlaySpinner } from '@/components/commons/loaders/spinners';
+import ThemedText from '@/components/commons/typography/ThemedText';
+import { COLORS } from '@/constants/colors';
+import { useLogin } from '@/hooks/api/auth/index';
+import { useTheme } from '@/hooks/useThemeColor';
+import { Entypo } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import Toast from 'react-native-toast-message';
 
-const SignIn = () => {
+const SignIn: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
+  const colors = resolvedTheme === 'light' ? COLORS.light : COLORS.dark;
 
-  const [role, setRole] = useState("Student");
-  const [email, setEmail] = useState("");
-  const [matricule, setMatricule] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailValid, setEmailValid] = useState(false);
-  const [matriculeValid, setMatriculeValid] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [role, setRole] = useState<'Student' | 'Teacher'>('Student');
+  const [email, setEmail] = useState<string>('');
+  const [matricule, setMatricule] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [emailValid, setEmailValid] = useState<boolean>(false);
+  const [matriculeValid, setMatriculeValid] = useState<boolean>(false);
+  const [passwordValid, setPasswordValid] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const { mutate: login, isPending } = useLogin();
 
   const roles = [
-    { label: "Student", value: "Student" },
-    { label: "Teacher", value: "Teacher" },
+    { label: 'Student', value: 'Student' },
+    { label: 'Teacher', value: 'Teacher' },
   ];
 
   const isFormValid = () => {
-    if (role === "Teacher") {
-      return emailValid && passwordValid;
-    } else {
-      return matriculeValid && passwordValid;
-    }
+    return role === 'Teacher' ? emailValid && passwordValid : matriculeValid && passwordValid;
+  };
+
+  const handleLogin = () => {
+    const identifier = role === 'Teacher' ? email : matricule;
+    login(
+      { identifier, password, role },
+      {
+        onSuccess: (data) => {
+          console.log('Login successful:', data);
+          router.replace('/(public)/(drawer)/(tabs)/course');
+        },
+        onError: (error) => {
+          Toast.show({
+            type: 'error',
+            text1: 'Login Failed',
+            text2: error.message || 'Invalid credentials',
+          });
+        },
+      }
+    );
   };
 
   return (
     <PageContainers>
       <View style={styles.container}>
-        {/* Placeholder Image */}
+          { isPending && <OverlaySpinner />}
         <View
           style={{
-            ...styles.imagePlaceholder,
-            backgroundColor: colors.backgroundNeutral,
+            ...styles.titleContainer,
+            // ...styles.imagePlaceholder,
+            // backgroundColor: colors.backgroundNeutral,
           }}
-        />
+        >
+          <ThemedText variant='h2' style={{fontSize: 52, lineHeight: 56}}>FET SPACE</ThemedText>
+        </View>
         <ThemedText style={styles.signInAsText}>Sign In As:</ThemedText>
         <DropDownPicker
           open={open}
@@ -57,7 +81,7 @@ const SignIn = () => {
           setValue={setRole}
           style={{
             backgroundColor: colors.backgroundNeutral,
-            borderColor: "transparent",
+            borderColor: 'transparent',
             width: 150,
             marginBottom: 30,
             marginLeft: 16,
@@ -67,7 +91,7 @@ const SignIn = () => {
             borderColor: colors.neutralBorder,
           }}
           textStyle={{
-            color: colors.neutralTextSecondary,
+            color: colors.neutralTextPrimary,
           }}
           ArrowDownIconComponent={({ style }) => (
             <Entypo
@@ -84,14 +108,9 @@ const SignIn = () => {
             />
           )}
           placeholder="Select Role"
-          // onChangeValue={() => {
-          //   setEmail("");
-          //   setMatricule("");
-          //   setPassword("");
-          // }}
         />
         <View style={{ paddingHorizontal: 16 }}>
-          {role === "Teacher" ? (
+          {role === 'Teacher' ? (
             <View style={{ gap: 16 }}>
               <InputEmail
                 label="Email"
@@ -130,14 +149,8 @@ const SignIn = () => {
             title="Sign In"
             variant="primary"
             style={{ marginTop: 30 }}
-            disabled={
-              !(role === "teacher"
-                ? emailValid && passwordValid
-                : matriculeValid && passwordValid)
-            }
-            onPress={()=>{
-              router.replace('/(public)/(drawer)/(tabs)/course')
-            }}
+            disabled={!isFormValid() || isPending}
+            onPress={handleLogin}
           />
         </View>
       </View>
@@ -148,19 +161,23 @@ const SignIn = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 60,
   },
   imagePlaceholder: {
     width: 100,
     height: 100,
     borderRadius: 100,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginBottom: 20,
   },
   signInAsText: {
     marginBottom: 4,
     marginLeft: 20,
-    fontWeight: 600,
+    fontWeight: '600',
   },
 });
 

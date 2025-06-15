@@ -8,6 +8,6 @@ export const validatePassword = (password: string): boolean => {
 };
 
 export const validateMatricule = (matricule: string): boolean => {
-  const matriculeRegex = /^fe\d{2}a\d{3}$/;
+  const matriculeRegex = /^fe\d{2}a\d{3}$/i; // Added the 'i' flag for case-insensitive matching
   return matriculeRegex.test(matricule);
 };

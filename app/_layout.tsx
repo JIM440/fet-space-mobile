@@ -1,37 +1,38 @@
-import { ThemeProvider } from "@/context/ThemeContext";
-import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
-import "react-native-reanimated";
+import CustomToast from '@/components/commons/toast/CustomToast';
+import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
+import { Slot } from 'expo-router';
+import React from 'react';
+import 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
+
+const toastConfig = {
+  success: (props: any) => <CustomToast {...props} type="success" />,
+  error: (props: any) => <CustomToast {...props} type="error" />,
+  info: (props: any) => <CustomToast {...props} type="info" />,
+};
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  //   const [loaded] = useFonts({
-  //   "Product-Sans-Regular": require("../assets/fonts/google-sans/ProductSans-Regular.ttf"),
-  //   "Product-Sans-Medium": require("../assets/fonts/google-sans/ProductSans-Medium.ttf"),
-  //   "Product-Sans-Bold": require("../assets/fonts/google-sans/ProductSans-Bold.ttf"),
-  //   "Product-Sans-Light": require("../assets/fonts/google-sans/ProductSans-Light.ttf"),
-  //   "Product-Sans-Thin": require("../assets/fonts/google-sans/ProductSans-Thin.ttf"),
-  // });
-
-  // const [loaded] = useFonts({
-    // "OpenSans-Regular": require("../assets/fonts/Open_Sans/static/OpenSans_Condensed-Regular.ttf"),
-    // "OpenSans-Medium": require("../assets/fonts/Open_Sans/static/OpenSans_Condensed-Medium.ttf"),
-    // "OpenSans-Bold": require("../assets/fonts/Open_Sans/static/OpenSans_Condensed-Bold.ttf"),
-    // "OpenSans-Light": require("../assets/fonts/Open_Sans/static/OpenSans_Condensed-Light.ttf"),
-    // "OpenSans-Thin": require("../assets/fonts/Open_Sans/static/OpenSans_Condensed-Thin.ttf"),
-  // });
+  const queryClient = new QueryClient();
 
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
 
   return (
-    <ThemeProvider>
-      <Slot />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
+          <Slot />
+          <Toast config={toastConfig} visibilityTime={4000} position='bottom' />
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

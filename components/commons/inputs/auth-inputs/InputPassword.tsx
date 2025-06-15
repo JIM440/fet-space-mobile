@@ -50,8 +50,8 @@ const InputPassword: React.FC<InputPasswordProps> = ({
       <TouchableOpacity style={styles.iconContainer} onPress={toggleSecureEntry}>
         <Feather
           name={isSecure ? 'eye-off' : 'eye'}
-          size={18}
-          color={colors.neutralTextSecondary}
+          size={16}
+          color={colors.neutralTextPrimary}
         />
       </TouchableOpacity>
     </View>

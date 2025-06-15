@@ -79,7 +79,11 @@ const Button: React.FC<ButtonProps> = ({
     >
       <ThemedText
         variant="body"
-        style={{ color: colors.neutralTextPrimary, fontWeight: 600 }}
+        style={{
+          color:
+            variant === "primary" ? colors.white : colors.neutralTextPrimary,
+          fontWeight: 600,
+        }}
       >
         {title}
       </ThemedText>

@@ -165,7 +165,7 @@ const ModalLayout = () => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 40,
+    paddingTop: 60,
     // paddingBottom: 20,
     paddingHorizontal: 20,
     // borderBottomColor: "#ccc",

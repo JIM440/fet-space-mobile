@@ -15,9 +15,11 @@ interface notificationProps {
 }
 
 const NotificationsItem = ({
-  notification, index
+  notification,
+  index,
 }: {
-  notification: notificationProps, index?: number;
+  notification: notificationProps;
+  index?: number;
 }) => {
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
@@ -29,11 +31,9 @@ const NotificationsItem = ({
         backgroundColor: notification.read
           ? "transparent"
           : colors.backgroundLight,
-        marginBottom: 0,
+        marginBottom: 1,
         gap: 8,
         flexDirection: "row",
-        borderTopColor: colors.neutralBorder,
-        borderTopWidth: index === 0 ? 0 : 1
       }}
     >
       <Image
