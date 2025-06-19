@@ -1,47 +1,58 @@
-import { useTheme } from "@/hooks/useThemeColor";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import PageContainers from '@/components/commons/containers/PageContainer';
+import { OverlaySpinner } from '@/components/commons/loaders/spinners';
+import { BackHeader } from '@/components/commons/navigation/BackHeader';
+import ThemedText from '@/components/commons/typography/ThemedText';
+import { COLORS } from '@/constants/colors';
+import { useLogout } from '@/hooks/api/auth';
+import { useTheme } from '@/hooks/useThemeColor';
+import { Entypo, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
-import PageContainers from "@/components/commons/containers/PageContainer";
-import { BackHeader } from "@/components/commons/navigation/BackHeader";
-import ThemedText from "@/components/commons/typography/ThemedText";
-import { COLORS } from "@/constants/colors";
-import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-
-const SettingsScreen = () => {
+const SettingsScreen: React.FC = () => {
   const { currentTheme, resolvedTheme, setTheme } = useTheme();
-  const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
+  const colors = resolvedTheme === 'light' ? COLORS.light : COLORS.dark;
+
+  const { mutate: logout, isPending } = useLogout();
 
   const handleLogout = () => {
-    console.log("Logout pressed");
+    logout(undefined, {
+      onSuccess: async () => {
+        Toast.show({
+          type: 'success',
+          text1: 'Logout Successful',
+          text2: 'You have been signed out',
+        });
+        router.replace('/login');
+      },
+      onError: (error) => {
+        Toast.show({
+          type: 'error',
+          text1: 'Logout Failed',
+          text2: error.message || 'Unable to sign out',
+        });
+      },
+    });
   };
 
   return (
     <PageContainers>
-      {/* back header */}
+      {/* Overlay Spinner */}
+      { isPending && <OverlaySpinner />}
+      {/* Back header */}
       <BackHeader title="Settings" />
-      {/* theme switcher */}
-      <View
-        style={[styles.container, { backgroundColor: colors.backgroundMain }]}
-      >
+      {/* Theme switcher */}
+      <View style={[styles.container, { backgroundColor: colors.backgroundMain }]}>
         <View style={{ flex: 1, gap: 24 }}>
-          <ThemedText
-            style={{ color: colors.neutralTextSecondary, fontWeight: 600 }}
-          >
+          <ThemedText style={{ color: colors.neutralTextSecondary, fontWeight: '600' }}>
             Theme
           </ThemedText>
-          <View
-            style={[
-              styles.card,
-              { backgroundColor: colors.backgroundSecondary },
-            ]}
-          >
+          <View style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
             <TouchableOpacity
-              style={[
-                styles.option,
-                { borderBottomColor: colors.backgroundNeutral },
-              ]}
-              onPress={() => setTheme("automatic")}
+              style={[styles.option, { borderBottomColor: colors.backgroundNeutral }]}
+              onPress={() => setTheme('automatic')}
             >
               <View style={styles.optionContent}>
                 <MaterialCommunityIcons
@@ -50,37 +61,21 @@ const SettingsScreen = () => {
                   color={colors.neutralTextPrimary}
                   style={styles.icon}
                 />
-                <Text
-                  style={[
-                    styles.optionText,
-                    { color: colors.neutralTextPrimary },
-                  ]}
-                >
+                <Text style={[styles.optionText, { color: colors.neutralTextPrimary }]}>
                   Automatic
                 </Text>
               </View>
-              <View
-                style={[
-                  styles.radio,
-                  { borderColor: colors.neutralTextSecondary },
-                ]}
-              >
-                {currentTheme === "automatic" && (
+              <View style={[styles.radio, { borderColor: colors.neutralTextSecondary }]}>
+                {currentTheme === 'automatic' && (
                   <View
-                    style={[
-                      styles.radioSelected,
-                      { backgroundColor: colors.neutralTextSecondary },
-                    ]}
+                    style={[styles.radioSelected, { backgroundColor: colors.neutralTextSecondary }]}
                   />
                 )}
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
-                styles.option,
-                { borderBottomColor: colors.neutralBorder },
-              ]}
-              onPress={() => setTheme("light")}
+              style={[styles.option, { borderBottomColor: colors.neutralBorder }]}
+              onPress={() => setTheme('light')}
             >
               <View style={styles.optionContent}>
                 <Entypo
@@ -89,34 +84,21 @@ const SettingsScreen = () => {
                   style={styles.icon}
                   color={colors.neutralTextPrimary}
                 />
-                <Text
-                  style={[
-                    styles.optionText,
-                    { color: colors.neutralTextPrimary },
-                  ]}
-                >
+                <Text style={[styles.optionText, { color: colors.neutralTextPrimary }]}>
                   Light
                 </Text>
               </View>
-              <View
-                style={[
-                  styles.radio,
-                  { borderColor: colors.neutralTextSecondary },
-                ]}
-              >
-                {currentTheme === "light" && (
+              <View style={[styles.radio, { borderColor: colors.neutralTextSecondary }]}>
+                {currentTheme === 'light' && (
                   <View
-                    style={[
-                      styles.radioSelected,
-                      { backgroundColor: colors.neutralTextSecondary },
-                    ]}
+                    style={[styles.radioSelected, { backgroundColor: colors.neutralTextSecondary }]}
                   />
                 )}
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.option, { borderBottomColor: "transparent" }]}
-              onPress={() => setTheme("dark")}
+              style={[styles.option, { borderBottomColor: 'transparent' }]}
+              onPress={() => setTheme('dark')}
             >
               <View style={styles.optionContent}>
                 <Ionicons
@@ -125,38 +107,23 @@ const SettingsScreen = () => {
                   color={colors.neutralTextPrimary}
                   style={styles.icon}
                 />
-                <Text
-                  style={[
-                    styles.optionText,
-                    { color: colors.neutralTextPrimary },
-                  ]}
-                >
+                <Text style={[styles.optionText, { color: colors.neutralTextPrimary }]}>
                   Dark
                 </Text>
               </View>
-              <View
-                style={[
-                  styles.radio,
-                  { borderColor: colors.neutralTextSecondary },
-                ]}
-              >
-                {currentTheme === "dark" && (
+              <View style={[styles.radio, { borderColor: colors.neutralTextSecondary }]}>
+                {currentTheme === 'dark' && (
                   <View
-                    style={[
-                      styles.radioSelected,
-                      { backgroundColor: colors.neutralTextSecondary },
-                    ]}
+                    style={[styles.radioSelected, { backgroundColor: colors.neutralTextSecondary }]}
                   />
                 )}
               </View>
             </TouchableOpacity>
           </View>
         </View>
-        {/* logout button */}
-        <TouchableOpacity style={[styles.logoutButton]} onPress={handleLogout}>
-          <Text style={{ ...styles.logoutText, color: colors.error }}>
-            Sign Out
-          </Text>
+        {/* Logout button */}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} disabled={isPending}>
+          <Text style={[styles.logoutText, { color: colors.error }]}>Sign Out</Text>
         </TouchableOpacity>
       </View>
     </PageContainers>
@@ -173,21 +140,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     paddingTop: 0,
   },
   option: {
-    // flex: 1,
-    // height: 100,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 24,
     borderBottomWidth: 1,
   },
   optionContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   icon: {
     marginRight: 10,
@@ -200,22 +165,17 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 10,
     borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   radioSelected: {
     width: 12,
     height: 12,
     borderRadius: 6,
   },
-  note: {
-    fontSize: 12,
-    marginTop: 5,
-    marginBottom: 15,
-  },
   logoutButton: {
     paddingVertical: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   logoutText: {
     fontSize: 16,

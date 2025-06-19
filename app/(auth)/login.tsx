@@ -45,7 +45,6 @@ const SignIn: React.FC = () => {
       { identifier, password, role },
       {
         onSuccess: (data) => {
-          console.log('Login successful:', data);
           router.replace('/(public)/(drawer)/(tabs)/course');
         },
         onError: (error) => {

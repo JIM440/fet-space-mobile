@@ -1,11 +1,13 @@
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@/hooks/useThemeColor";
+import { RelativePathString, router } from "expo-router";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import ThemedText from "../typography/ThemedText";
 
 interface curriculumProps {
-    name: string
+    name: string,
+    pdf: string;
 }
 
 const CurriculumCard = ({ curriculum }: { curriculum: curriculumProps }) => {
@@ -19,14 +21,15 @@ const CurriculumCard = ({ curriculum }: { curriculum: curriculumProps }) => {
         padding: 16,
         borderWidth: 1,
         borderColor: colors.neutralBorder,
-        // flexDirection: 'row',
-        // alignItems: 'flex-start'
       }}
       onPress={() => {
-        // router.push(`/curriculum/${curriculum.id}` as RelativePathString);
+        router.push({
+          pathname: "/curriculum-viewer" as RelativePathString,
+          params: { pdf: curriculum.pdf }
+        });
       }}
+
     >
-      {/* <View style={{flex: 1}}> */}
       <ThemedText variant="h4">
         {curriculum.name}
       </ThemedText>

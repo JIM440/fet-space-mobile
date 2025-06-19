@@ -21,7 +21,7 @@ const PublicLayout = () => {
 
     checkLogIn();
   }, []);
-  if (!loggedIn) {
+  if (!loggedIn && !isLoading) {
     return <Redirect href="/(auth)/login" />;
   }
   return (

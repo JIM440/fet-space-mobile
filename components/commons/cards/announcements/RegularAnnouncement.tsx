@@ -1,11 +1,20 @@
-import AddCommentInput from "@/components/commons/inputs/AddCommentInput";
-import ThemedText from "@/components/commons/typography/ThemedText";
-import { COLORS } from "@/constants/colors";
-import { useTheme } from "@/hooks/useThemeColor";
-import { RegularAnnouncementProps } from "@/types";
-import { RelativePathString, router } from "expo-router";
-import React from "react";
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import AddCommentInput from '@/components/commons/inputs/AddCommentInput';
+import ThemedText from '@/components/commons/typography/ThemedText';
+import { COLORS } from '@/constants/colors';
+import { useTheme } from '@/hooks/useThemeColor';
+import { router } from 'expo-router';
+import React from 'react';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+
+interface RegularAnnouncementProps {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  comments?: number;
+  author: { name: string; image: string };
+  announcementType: 'general' | 'course';
+}
 
 const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
   id,
@@ -17,27 +26,29 @@ const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
   announcementType,
 }) => {
   const { resolvedTheme } = useTheme();
-  const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
+  const colors = resolvedTheme === 'light' ? COLORS.light : COLORS.dark;
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
+    return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
   };
 
   return (
     <Pressable
       style={[styles.item, { backgroundColor: colors.backgroundMain }]}
       onPress={() => {
-        router.push(
-          (announcementType === "course"
-            ? `/course-announcement/${id}`
-            : `/announcement/${id}`) as RelativePathString
-        );
+        router.push({
+  pathname: announcementType === "course"
+    ? "/course-announcement/[id]"
+    : "/announcement/[id]",
+  params: { id: id.toString() },
+});
+
       }}
     >
       <View style={styles.header}>
         <Image
-          source={require("@/assets/images/candace_owens.jpg")}
+          source={require('@/assets/images/candace_owens.jpg')}
           style={{ ...styles.badge, backgroundColor: colors.backgroundNeutral }}
         />
         <View>
@@ -64,7 +75,7 @@ const RegularAnnouncement: React.FC<RegularAnnouncementProps> = ({
           style={{
             color: colors.neutralTextTertiary,
             marginTop: 8,
-            textAlign: "right",
+            textAlign: 'right',
           }}
         >
           {comments || 0} comments
@@ -80,8 +91,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
   badge: {

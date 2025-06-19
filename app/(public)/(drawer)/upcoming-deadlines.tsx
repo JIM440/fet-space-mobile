@@ -1,60 +1,63 @@
+import Button from "@/components/commons/buttons/Button";
 import PageContainers from "@/components/commons/containers/PageContainer";
-import BackHeader from "@/components/commons/navigation/BackHeader";
+import { FullPageSpinner } from "@/components/commons/loaders/spinners";
+import { BackHeader } from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
+import { AuthContext } from "@/context/AuthContext";
+import { useGetDeadlines } from "@/hooks/api/student";
 import { useTheme } from "@/hooks/useThemeColor";
-import React from "react";
+import React, { useContext } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-
-interface Assignment {
-  id: number;
-  title: string;
-  courseCode: string;
-  dueDate: string;
-  description: string;
-  imageUri: string;
-}
-
-const mockAssignments: Assignment[] = [
-  {
-    id: 1,
-    title: "Final Project Proposal",
-    courseCode: "CEF 350",
-    dueDate: "May 25, 2025, 11:59 PM",
-    description:
-      "Submit a detailed proposal for your final project, including methodology and timeline.",
-    imageUri: "https://via.placeholder.com/80", // Replace with actual image URI
-  },
-  {
-    id: 2,
-    title: "Midterm Assignment",
-    courseCode: "MEC 410",
-    dueDate: "May 27, 2025, 11:59 PM",
-    description:
-      "Complete the design analysis for the robotics module and submit your report.",
-    imageUri: "https://via.placeholder.com/80", // Replace with actual image URI
-  },
-  {
-    id: 3,
-    title: "Lab Report 3",
-    courseCode: "ELE 320",
-    dueDate: "May 30, 2025, 11:59 PM",
-    description:
-      "Analyze the circuit data from Lab 3 and submit your findings.",
-    imageUri: "https://via.placeholder.com/80", // Replace with actual image URI
-  },
-];
 
 const UpcomingDeadlines = () => {
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
+  const { user } = useContext(AuthContext);
+  const { deadlines, isLoading, isError, error, refetch } = useGetDeadlines();
+
+  if (!user || user.role !== 'Student') {
+    return (
+      <PageContainers>
+        <BackHeader title="Upcoming Deadlines" />
+        <View style={[styles.errorContainer, { backgroundColor: colors.backgroundMain }]}>
+          <ThemedText style={[styles.errorText, { color: colors.error }]}>
+            Access restricted to students only.
+          </ThemedText>
+        </View>
+      </PageContainers>
+    );
+  }
+
+  if (isLoading) {
+    return <FullPageSpinner />;
+  }
+
+  if (isError || !deadlines) {
+    return (
+      <PageContainers>
+        <BackHeader title="Upcoming Deadlines" />
+        <View style={[styles.errorContainer, { backgroundColor: colors.backgroundMain }]}>
+          <ThemedText style={[styles.errorText, { color: colors.error }]}>
+            Error: {error?.message || 'Failed to load deadlines'}
+          </ThemedText>
+          <Button
+            title="Retry"
+            variant="primary"
+            onPress={() => refetch()}
+            style={styles.retryButton}
+          />
+        </View>
+      </PageContainers>
+    );
+  }
 
   return (
     <PageContainers>
       <BackHeader title="Upcoming Deadlines" />
       <ScrollView style={{ width: "100%", paddingBottom: 16 }}>
-        {mockAssignments.length > 0 ? (
-          mockAssignments.map((assignment) => (
+        {deadlines.length > 0 ? (
+          deadlines.map((assignment) => (
             <View
               key={assignment.id}
               style={{
@@ -85,13 +88,20 @@ const UpcomingDeadlines = () => {
                     marginTop: 12,
                   }}
                 >
-                  Due: {assignment.dueDate}
+                  Due: {new Date(assignment.dueDate).toLocaleString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                  })}
                 </ThemedText>
               </View>
             </View>
           ))
         ) : (
-          <ThemedText style={{ color: colors.neutralTextSecondary }}>
+          <ThemedText style={{ color: colors.neutralTextSecondary, paddingHorizontal: 20 }}>
             No upcoming deadlines.
           </ThemedText>
         )}
@@ -110,6 +120,20 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  errorText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  retryButton: {
+    width: '50%',
   },
 });
 

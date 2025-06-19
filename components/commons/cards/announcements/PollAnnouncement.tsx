@@ -1,8 +1,9 @@
 import AddCommentInput from "@/components/commons/inputs/AddCommentInput";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
+import { useRespondPoll } from "@/hooks/api/polls";
 import { useTheme } from "@/hooks/useThemeColor";
-import { RelativePathString, router, usePathname } from "expo-router";
+import { router, usePathname } from "expo-router";
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import PollOption from "./PollOption";
@@ -14,11 +15,13 @@ interface PollAnnouncementProps {
   date: string;
   comments?: number;
   author: { name: string; image: string };
-  options: { text: string; votes: number }[];
+  options: { text: string; votes: number; optionId: number }[];
   totalVotes: number;
   allowMultipleAnswers: boolean;
   index: number;
-  announcementType: string;
+  announcementType: "general" | "course";
+  pollId: number;
+  announcementId: number;
 }
 
 const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
@@ -33,65 +36,57 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
   allowMultipleAnswers,
   index,
   announcementType,
+  pollId,
+  announcementId,
 }) => {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
-  const [pollSelections, setPollSelections] = useState<{
-    [key: number]: string[];
-  }>({});
+  const [pollSelections, setPollSelections] = useState<string[]>([]);
+  const { mutate: respondPoll, isPending } = useRespondPoll(announcementId);
 
-  const isAnnouncementDetailPath = pathname.includes("/announcement/") || pathname.includes("/course-announcement")
+  const isAnnouncementDetailPath =
+    pathname.includes("/announcement/") ||
+    pathname.includes("/course-announcement");
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
   };
 
-  const handlePollSelection = (optionText: string) => {
+  const handlePollSelection = (optionText: string, optionId: number) => {
     setPollSelections((prev) => {
-      const currentSelections = prev[index] || [];
       if (allowMultipleAnswers) {
-        if (currentSelections.includes(optionText)) {
-          return {
-            ...prev,
-            [index]: currentSelections.filter((opt) => opt !== optionText),
-          };
+        if (prev.includes(optionText)) {
+          return prev.filter((opt) => opt !== optionText);
         } else {
-          return {
-            ...prev,
-            [index]: [...currentSelections, optionText],
-          };
+          return [...prev, optionText];
         }
       } else {
-        if (currentSelections.includes(optionText)) {
-          return {
-            ...prev,
-            [index]: [],
-          };
+        if (prev.includes(optionText)) {
+          return [];
         } else {
-          return {
-            ...prev,
-            [index]: [optionText],
-          };
+          return [optionText];
         }
       }
     });
+
+    respondPoll({ pollId, optionId });
   };
 
   return (
     <Pressable
       style={[styles.item, { backgroundColor: colors.backgroundMain }]}
       onPress={() => {
-        router.push(
-          (announcementType === "course"
-            ? `/course-announcement/${id}`
-            : `/announcement/${id}`) as RelativePathString
-        );
+        router.push({
+  pathname: announcementType === "course"
+    ? "/course-announcement/[id]"
+    : "/announcement/[id]",
+  params: { id: id.toString() },
+});
+
       }}
-      disabled={
-        isAnnouncementDetailPath
-      }
+      disabled={isAnnouncementDetailPath}
     >
       <View style={styles.header}>
         <Image
@@ -118,16 +113,16 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
         {options.map((option, optIndex) => (
           <PollOption
             key={optIndex}
-            option={option}
+            option={{ ...option, votes: option.votes }}
             totalVotes={totalVotes}
-            isSelected={pollSelections[index]?.includes(option.text) || false}
+            isSelected={pollSelections.includes(option.text)}
             allowMultipleAnswers={allowMultipleAnswers}
-            onSelect={() => handlePollSelection(option.text)}
+            onSelect={() => handlePollSelection(option.text, option.optionId)}
             colors={colors}
           />
         ))}
       </View>
-      {(comments === 0 || !comments) && !isAnnouncementDetailPath  ? (
+      {(comments === 0 || !comments) && !isAnnouncementDetailPath ? (
         <AddCommentInput value="" onChangeText={() => {}} disabled={true} />
       ) : (
         <ThemedText

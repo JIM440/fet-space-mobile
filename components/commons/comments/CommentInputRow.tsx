@@ -1,21 +1,20 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import AddCommentInput from "../inputs/AddCommentInput";
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import AddCommentInput from '../inputs/AddCommentInput';
 
 interface CommentInputProps {
   type_id: string;
-  type: string;
+  type: 'courseAnnouncement' | 'generalAnnouncement';
+  onSubmit: (content: string) => void;
 }
 
-const CommentInput: React.FC<CommentInputProps> = ({ type_id, type }) => {
-  const [commentText, setCommentText] = useState("");
+const CommentInput: React.FC<CommentInputProps> = ({ type_id, type, onSubmit }) => {
+  const [commentText, setCommentText] = useState('');
 
   const handleSubmit = () => {
     if (commentText.trim()) {
-      console.log(
-        `Submitting comment for announcement ${type_id}: ${commentText}`
-      );
-      setCommentText("");
+      onSubmit(commentText);
+      setCommentText('');
     }
   };
 

@@ -3,7 +3,6 @@ import React from "react";
 import { ActivityIndicator, Modal, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../hooks/useThemeColor";
 import PageContainers from "../containers/PageContainer";
-import { BackHeader } from "../navigation/BackHeader";
 
 interface SpinnerProps {
   size?: "small" | "large";
@@ -44,7 +43,6 @@ export const FullPageSpinner: React.FC<SpinnerProps> = ({ color }) => {
 
   return (
     <PageContainers>
-      <BackHeader title="" />
       <View style={styles.fullPage}>
         <ActivityIndicator
           size={48}

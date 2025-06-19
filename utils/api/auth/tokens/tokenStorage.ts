@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 
 export const getTokenFromStorage = async (key: string) => {
   try {
+    console.log(`Retrieving ${key} from storage`);
     return await SecureStore.getItemAsync(key);
   } catch (error) {
     console.error(`Error retrieving ${key} from storage:`, error);
@@ -11,6 +12,7 @@ export const getTokenFromStorage = async (key: string) => {
 
 export const setTokenInStorage = async (key: string, value: string) => {
   try {
+    console.log(`Storing ${key} in storage:`, value);
     await SecureStore.setItemAsync(key, value);
   } catch (error) {
     console.error(`Error storing ${key} in storage:`, error);

@@ -1,116 +1,152 @@
+import Button from "@/components/commons/buttons/Button";
 import MoreItemsButton from "@/components/commons/buttons/MoreItemsButton";
 import PageContainers from "@/components/commons/containers/PageContainer";
+import { FullPageSpinner } from "@/components/commons/loaders/spinners";
 import TabHeader from "@/components/commons/navigation/TabHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import ItemLabelAndValue from "@/components/screens/profile/ItemLabelAndValue";
 import ProfileOptionsModal from "@/components/screens/profile/ProfileOptionsModal";
 import { COLORS } from "@/constants/colors";
+import { useGetStudentDetails } from "@/hooks/api/student";
 import { useTheme } from "@/hooks/useThemeColor";
-import React, { useState } from "react";
-import { Image, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
+import Toast from "react-native-toast-message";
 
-const Profile = () => {
+const Profile: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const {
+    data: student,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetStudentDetails();
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
+  // Show toast on successful fetch
+  useEffect(() => {
+    if (isError && error) {
+      Toast.show({
+        type: "error",
+        text2: error.message || "Failed to load profile",
+      });
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <PageContainers>
+        <TabHeader />
+        <FullPageSpinner />
+      </PageContainers>
+    );
+  }
+
+  if (isError) {
+    return (
+      <PageContainers>
+        <TabHeader />
+        <View
+          style={[
+            styles.errorContainer,
+            { backgroundColor: colors.backgroundMain },
+          ]}
+        >
+          <ThemedText style={[styles.errorText]}>
+            {('Error:' + error?.message) || "Failed to load profile"}
+          </ThemedText>
+          <Button title="Retry" onPress={() => refetch()} />
+        </View>
+      </PageContainers>
+    );
+  }
+
   return (
     <PageContainers>
       <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-start",
-        }}
+        style={[styles.container, { backgroundColor: colors.backgroundMain }]}
       >
-        {/* tab header */}
+        {/* Tab header */}
         <TabHeader />
-        {/* profile header */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 20,
-            paddingVertical: 16,
-          }}
-        >
+        {/* Profile header */}
+        <View style={styles.profileHeader}>
           <ThemedText variant="h3">Profile</ThemedText>
           <MoreItemsButton onPress={toggleModal} />
         </View>
-        {/* profile items container */}
-        <View style={{ flex: 1, paddingHorizontal: 20 }}>
-          {/* row 1 */}
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 16,
-              alignItems: "center",
-            }}
-          >
-            {/* profile image */}
+        {/* Profile items container */}
+        <View style={styles.profileItems}>
+          {/* Row 1 */}
+          <View style={styles.profileRow}>
+            {/* Profile image */}
             <View
-              style={{
-                backgroundColor: colors.backgroundSecondary,
-                width: 105,
-                height: 105,
-                borderRadius: 120,
-                padding: 4,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={[
+                styles.imageContainer,
+                { backgroundColor: colors.backgroundSecondary },
+              ]}
             >
               <Image
                 source={require("@/assets/images/candace_owens.jpg")}
-                style={{
-                  backgroundColor: colors.backgroundNeutral,
-                  width: 100,
-                  height: 100,
-                  borderRadius: 120,
-                }}
+                style={[
+                  styles.profileImage,
+                  { backgroundColor: colors.backgroundNeutral },
+                ]}
               />
             </View>
-
-            <View style={{ gap: 6 }}>
+            <View style={styles.profileInfo}>
               <ThemedText
                 variant="h3"
                 style={{ color: colors.neutralTextPrimary }}
               >
-                Njeck Dorothy Ambe
+                {student?.name || "N/A"}
               </ThemedText>
               <ThemedText
-                style={{ fontSize: 15, color: colors.neutralTextSecondary }}
+                style={[
+                  styles.infoText,
+                  { color: colors.neutralTextSecondary },
+                ]}
               >
-                FE21A504
+                {student?.student.matricule_number || "N/A"}
               </ThemedText>
               <ThemedText
-                style={{ fontSize: 15, color: colors.neutralTextSecondary }}
+                style={[
+                  styles.infoText,
+                  { color: colors.neutralTextSecondary },
+                ]}
               >
                 B.eng Computer Engineering
               </ThemedText>
             </View>
           </View>
-          {/* row 2 */}
-          <View style={{ paddingHorizontal: 20, paddingVertical: 24, gap: 16 }}>
-            <View style={{ flexDirection: "row", gap: 16 }}>
-              <ItemLabelAndValue label="Level:" value="200" />
+          {/* Row 2 */}
+          <View style={styles.detailsContainer}>
+            <View style={styles.detailRow}>
+              <ItemLabelAndValue
+                label="Level:"
+                value={student?.student.level || "N/A"}
+              />
               <ItemLabelAndValue label="Gender:" value="Male" />
             </View>
-            <View style={{ flexDirection: "row", gap: 16 }}>
+            <View style={styles.detailRow}>
               <ItemLabelAndValue
                 label="Institutional Email:"
-                value="njeckdorothy@ubuea.cm"
+                value={student?.student.institutional_email || "N/A"}
               />
               <ItemLabelAndValue
                 label="Alternative Email:"
-                value="njeckdorothy@gmail.com"
+                value={student?.email || "N/A"}
               />
             </View>
-            <View style={{ flexDirection: "row", gap: 16 }}>
-              <ItemLabelAndValue label="Nationality:" value="Cameroon" />
+            <View style={styles.detailRow}>
+              <ItemLabelAndValue
+                label="Nationality:"
+                value={student?.student.nationality || "N/A"}
+              />
               <ItemLabelAndValue label="Phone:" value="675829432" />
             </View>
           </View>
@@ -120,5 +156,70 @@ const Profile = () => {
     </PageContainers>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  retryButton: {
+    width: "50%",
+  },
+  profileHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  profileItems: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  profileRow: {
+    flexDirection: "row",
+    gap: 16,
+    alignItems: "center",
+  },
+  imageContainer: {
+    width: 105,
+    height: 105,
+    borderRadius: 120,
+    padding: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 120,
+  },
+  profileInfo: {
+    gap: 6,
+  },
+  infoText: {
+    fontSize: 15,
+  },
+  detailsContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    gap: 16,
+  },
+  detailRow: {
+    flexDirection: "row",
+    gap: 16,
+  },
+});
 
 export default Profile;

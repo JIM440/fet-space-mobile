@@ -1,9 +1,9 @@
-import PollAnnouncement from "@/components/commons/cards/announcements/PollAnouncement";
+import PollAnnouncement from "@/components/commons/cards/announcements/PollAnnouncement";
 import FileCard from "@/components/commons/cards/FileCard";
 import CommentInput from "@/components/commons/comments/CommentInputRow";
 import CommentList from "@/components/commons/comments/CommentsList";
 import PageContainers from "@/components/commons/containers/PageContainer";
-import BackHeader from "@/components/commons/navigation/BackHeader";
+import { BackHeader } from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { mockComments } from "@/constants/static-data/comments";

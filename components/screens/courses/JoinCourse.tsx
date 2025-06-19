@@ -3,9 +3,10 @@ import CloseButton from "@/components/commons/buttons/CloseButton";
 import ThemedInput from "@/components/commons/inputs/ThemedInput";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
+import { useJoinCourse } from "@/hooks/api/student"; // Adjust import path as needed
 import { useTheme } from "@/hooks/useThemeColor";
 import React, { useState } from "react";
-import { Dimensions, Modal, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, Modal, StyleSheet, View } from "react-native";
 
 interface JoinCourseModalProps {
   visible: boolean;
@@ -19,11 +20,35 @@ const JoinCourseModal: React.FC<JoinCourseModalProps> = ({
   const { width, height } = Dimensions.get("screen");
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
-  const [courseCode, setCourseCode] = useState("");
+  const [joinCode, setJoinCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const { mutate, isPending } = useJoinCourse();
 
   const handleClose = () => {
-    setCourseCode("");
+    setJoinCode("");
+    setError(null);
+    setSuccess(null);
     onClose();
+  };
+
+  const handleJoinCourse = () => {
+    if (joinCode.length === 0) {
+      setError("Please enter a join code");
+      return;
+    }
+    setError(null);
+    setSuccess(null);
+    mutate(joinCode, {
+      onSuccess: (data) => {
+        setSuccess("Successfully joined the course!");
+        setTimeout(handleClose, 2000); // Auto-close after 2 seconds
+      },
+      onError: (error) => {
+        setError(error.message || "Failed to join course");
+      },
+    });
   };
 
   return (
@@ -52,14 +77,26 @@ const JoinCourseModal: React.FC<JoinCourseModalProps> = ({
         <ThemedInput
           label="Code"
           placeholder="Enter code"
-          value={courseCode}
-          onChangeText={setCourseCode}
+          value={joinCode}
+          onChangeText={setJoinCode}
+          error={error}
         />
+        {error && (
+          <ThemedText style={{ color: colors.error, marginTop: 8 }}>
+            {error}
+          </ThemedText>
+        )}
+        {success && (
+          <ThemedText style={{ color: colors.success, marginTop: 8 }}>
+            {success}
+          </ThemedText>
+        )}
         <Button
-          title="Join Course"
+          title={isPending ? <ActivityIndicator color={colors.white} /> : "Join Course"}
           variant="primary"
-          disabled={courseCode.length === 0}
-          style={{ marginTop: 40 }}
+          disabled={joinCode.length === 0 || isPending}
+          style={{ marginTop: 20 }}
+          onPress={handleJoinCourse}
         />
       </View>
     </Modal>
@@ -69,10 +106,11 @@ const JoinCourseModal: React.FC<JoinCourseModalProps> = ({
 const styles = StyleSheet.create({
   modalView: {
     flex: 1,
-    backgroundColor: "red",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "red", // Replace with actual background color or remove
     padding: 20,
-    alignItems: "center",
-    paddingTop: 80,
+    paddingBottom: 100,
   },
   closeButton: {
     position: "absolute",
