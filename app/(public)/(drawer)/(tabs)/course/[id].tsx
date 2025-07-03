@@ -1,3 +1,4 @@
+// components/screens/course-details/CourseDetails.tsx
 import Button from '@/components/commons/buttons/Button';
 import FloatingAddItemBtn from '@/components/commons/buttons/FloatingAddItemBtn';
 import PageContainers from '@/components/commons/containers/PageContainer';
@@ -9,16 +10,20 @@ import Announcements from '@/components/screens/course-details/Announcements';
 import Assignments from '@/components/screens/course-details/Assignment';
 import Content from '@/components/screens/course-details/Content';
 import People from '@/components/screens/course-details/People';
+import RevisionQuestions from '@/components/screens/course-details/RevisionQuestions';
+import { teacher_role } from '@/constants';
 import { COLORS } from '@/constants/colors';
 import { useGetCourseDetails } from '@/hooks/api/courses';
+import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useThemeColor';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-const tabs = ['Announcements', 'Content', 'Assignments', 'People'];
+const tabs = ['Announcements', 'Content', 'Assignments', 'People', 'Revision Questions'];
 
 const CourseDetails: React.FC = () => {
+  const { role } = useAuth();
   const { id } = useLocalSearchParams();
   const courseId = parseInt(id as string);
   const { resolvedTheme } = useTheme();
@@ -26,29 +31,43 @@ const CourseDetails: React.FC = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('Announcements');
 
-  const { data: course, isLoading, isError, error, refetch } = useGetCourseDetails(courseId);
+  const {
+    data: course,
+    isLoading: isCourseLoading,
+    isError: isCourseError,
+    error: courseError,
+    refetch: refetchCourse,
+  } = useGetCourseDetails(courseId);
 
   const formatDate = (dateStr: string) => {
+    if (!dateStr) {
+      return '--';
+    }
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  if (isLoading) {
-    return <FullPageSpinner />;
+  if (isCourseLoading) {
+    return (
+      <PageContainers>
+        <BackHeader title="Course Details" />
+        <FullPageSpinner />
+      </PageContainers>
+    );
   }
 
-  if (isError || !course) {
+  if (isCourseError || !course) {
     return (
       <PageContainers>
         <BackHeader title="Course Details" />
         <View style={[styles.errorContainer, { backgroundColor: colors.backgroundMain }]}>
           <ThemedText style={[styles.errorText, { color: colors.error }]}>
-            Error: {error?.message || 'Failed to load course details'}
+            Error: {courseError?.message || 'Failed to load course details'}
           </ThemedText>
           <Button
             title="Retry"
             variant="primary"
-            onPress={() => refetch()}
+            onPress={() => refetchCourse()}
             style={styles.retryButton}
           />
         </View>
@@ -58,23 +77,24 @@ const CourseDetails: React.FC = () => {
 
   return (
     <PageContainers>
-      <BackHeader title={course.courseCode} />
+      <BackHeader title={course.code} />
       <ScrollView>
         <Image
+        source={require('@/assets/images/uml.png')}
           style={{
             backgroundColor: colors.backgroundNeutral,
-            height: 150,
+            height: 200,
             width: '100%',
           }}
         />
         <View style={{ paddingHorizontal: 20, paddingVertical: 20, gap: 16 }}>
           <ThemedText variant="h3" style={{ color: colors.neutralTextPrimary }}>
-            {course.courseCode + ': ' + course.title}
+            {course.code + ': ' + course.title}
           </ThemedText>
           {course.description && <ThemedText>{course.description}</ThemedText>}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <ThemedText variant="caption">Created at: {formatDate(course.created_at)}</ThemedText>
-            <ThemedText variant="caption">{course.student_count} Students</ThemedText>
+            <ThemedText variant="caption">{course.studentsCount} Students</ThemedText>
           </View>
         </View>
         <ScrollView
@@ -113,17 +133,18 @@ const CourseDetails: React.FC = () => {
           ))}
         </ScrollView>
         <View style={{ paddingTop: 30 }}>
-          {activeTab === 'Announcements' && <Announcements courseId={courseId.toString()} />}
-          {activeTab === 'Content' && <Content />}
-          {activeTab === 'Assignments' && <Assignments />}
-          {activeTab === 'People' && <People />}
+          {activeTab === 'Announcements' && <Announcements courseId={course.course_id} />}
+          {activeTab === 'Content' && <Content courseId={course.course_id} />}
+          {activeTab === 'Assignments' && <Assignments courseId={course.course_id} />}
+          {activeTab === 'People' && <People courseId={course.course_id} />}
+          {activeTab === 'Revision Questions' && <RevisionQuestions courseId={course.course_id} />}
         </View>
       </ScrollView>
-      <FloatingAddItemBtn onPress={() => setModalVisible(true)} />
+      {role === teacher_role && <FloatingAddItemBtn onPress={() => setModalVisible(true)} />}
       <AddOptionsModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        courseId={id?.toString()}
+        courseId={course.course_id}
       />
     </PageContainers>
   );

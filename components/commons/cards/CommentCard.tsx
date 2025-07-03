@@ -2,6 +2,7 @@ import ThemedText from '@/components/commons/typography/ThemedText';
 import { COLORS } from '@/constants/colors';
 import { useTheme } from '@/hooks/useThemeColor';
 import { Comment } from '@/types';
+import { getTimeAgo } from '@/utils/dateFormatter';
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
@@ -16,26 +17,37 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
   const formatTimestamp = (timestamp: string) => {
     const now = new Date();
     const date = new Date(timestamp);
-    const diffMs = now.getTime() - date.getTime();
+
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+
+    let diffMs = now.getTime() - date.getTime();
+
+    // For timestamps in the future or very close to now
+    if (diffMs < 0 || diffMs < 5000) return 'Just now'; // < 5 seconds tolerance
 
     const seconds = Math.floor(diffMs / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30.44); // average month
+    const years = Math.floor(days / 365);
 
     if (seconds < 60) return `${seconds}s`;
     if (minutes < 60) return `${minutes}m`;
     if (hours < 24) return `${hours}h`;
     if (days < 7) return `${days}d`;
-
-    // For older than a week, show date as "MMM d"
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (weeks < 4) return `${weeks}w`;
+    if (months < 12) return `${months}mo`;
+    return `${years}yr`;
   };
 
   return (
     <View style={[styles.container]}>
       <Image
-        source={require('@/assets/images/candace_owens.jpg')}
+        source={require('@/assets/images/jim.jpg')} // Replace with dynamic image if available
         style={{
           width: 40,
           height: 40,
@@ -55,18 +67,18 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
             numberOfLines={1}
             style={{ maxWidth: '95%', color: colors.neutralTextSecondary }}
           >
-            {comment.author}
+            {comment.user.name} {/* Use user.name as author */}
           </ThemedText>
           <ThemedText
             variant="caption"
             numberOfLines={1}
             style={{ color: colors.neutralTextSecondary }}
           >
-            {formatTimestamp(comment.timestamp)}
+            {getTimeAgo(comment.created_at)} {/* Use created_at for timestamp */}
           </ThemedText>
         </View>
         <ThemedText style={{ color: colors.neutralTextPrimary }}>
-          {comment.text}
+          {comment.content} {/* Use content as text */}
         </ThemedText>
       </View>
     </View>

@@ -1,28 +1,28 @@
-import Button from '@/components/commons/buttons/Button';
-import PageContainers from '@/components/commons/containers/PageContainer';
-import InputEmail from '@/components/commons/inputs/auth-inputs/InputEmail';
-import InputMatricule from '@/components/commons/inputs/auth-inputs/InputMatricule';
-import InputPassword from '@/components/commons/inputs/auth-inputs/InputPassword';
-import { OverlaySpinner } from '@/components/commons/loaders/spinners';
-import ThemedText from '@/components/commons/typography/ThemedText';
-import { COLORS } from '@/constants/colors';
-import { useLogin } from '@/hooks/api/auth/index';
-import { useTheme } from '@/hooks/useThemeColor';
-import { Entypo } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Toast from 'react-native-toast-message';
+import Button from "@/components/commons/buttons/Button";
+import PageContainers from "@/components/commons/containers/PageContainer";
+import InputEmail from "@/components/commons/inputs/auth-inputs/InputEmail";
+import InputMatricule from "@/components/commons/inputs/auth-inputs/InputMatricule";
+import InputPassword from "@/components/commons/inputs/auth-inputs/InputPassword";
+import { OverlaySpinner } from "@/components/commons/loaders/spinners";
+import ThemedText from "@/components/commons/typography/ThemedText";
+import { COLORS } from "@/constants/colors";
+import { useLogin } from "@/hooks/api/auth/index";
+import { useTheme } from "@/hooks/useThemeColor";
+import { Entypo } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import Toast from "react-native-toast-message";
 
 const SignIn: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const colors = resolvedTheme === 'light' ? COLORS.light : COLORS.dark;
+  const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
 
-  const [role, setRole] = useState<'Student' | 'Teacher'>('Student');
-  const [email, setEmail] = useState<string>('');
-  const [matricule, setMatricule] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [role, setRole] = useState<"Student" | "Teacher">("Student");
+  const [email, setEmail] = useState<string>("");
+  const [matricule, setMatricule] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [emailValid, setEmailValid] = useState<boolean>(false);
   const [matriculeValid, setMatriculeValid] = useState<boolean>(false);
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
@@ -31,27 +31,29 @@ const SignIn: React.FC = () => {
   const { mutate: login, isPending } = useLogin();
 
   const roles = [
-    { label: 'Student', value: 'Student' },
-    { label: 'Teacher', value: 'Teacher' },
+    { label: "Student", value: "Student" },
+    { label: "Teacher", value: "Teacher" },
   ];
 
   const isFormValid = () => {
-    return role === 'Teacher' ? emailValid && passwordValid : matriculeValid && passwordValid;
+    return role === "Teacher"
+      ? emailValid && passwordValid
+      : matriculeValid && passwordValid;
   };
 
   const handleLogin = () => {
-    const identifier = role === 'Teacher' ? email : matricule;
+    const identifier = role === "Teacher" ? email : matricule;
     login(
       { identifier, password, role },
       {
         onSuccess: (data) => {
-          router.replace('/(public)/(drawer)/(tabs)/course');
+          router.replace("/(public)/(drawer)/(tabs)/course");
         },
         onError: (error) => {
           Toast.show({
-            type: 'error',
-            text1: 'Login Failed',
-            text2: error.message || 'Invalid credentials',
+            type: "error",
+            text1: "Login Failed",
+            text2: error.message || "Invalid credentials",
           });
         },
       }
@@ -61,15 +63,33 @@ const SignIn: React.FC = () => {
   return (
     <PageContainers>
       <View style={styles.container}>
-          { isPending && <OverlaySpinner />}
-        <View
+        {isPending && <OverlaySpinner />}
+        {/* <View
           style={{
             ...styles.titleContainer,
             // ...styles.imagePlaceholder,
             // backgroundColor: colors.backgroundNeutral,
           }}
         >
-          <ThemedText variant='h2' style={{fontSize: 52, lineHeight: 56}}>FET SPACE</ThemedText>
+          <ThemedText variant="h2" style={{ fontSize: 52, lineHeight: 56 }}>
+            FET SPACE
+          </ThemedText>
+        </View> */}
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 40,
+          }}
+        >
+          <Image
+            source={
+              resolvedTheme === "light"
+                ? require("@/assets/images/splash-icon.png")
+                : require("@/assets/images/splash-icon-dark.png")
+            }
+            style={{ height: 100, width: 350 }}
+          />
         </View>
         <ThemedText style={styles.signInAsText}>Sign In As:</ThemedText>
         <DropDownPicker
@@ -80,7 +100,7 @@ const SignIn: React.FC = () => {
           setValue={setRole}
           style={{
             backgroundColor: colors.backgroundNeutral,
-            borderColor: 'transparent',
+            borderColor: "transparent",
             width: 150,
             marginBottom: 30,
             marginLeft: 16,
@@ -109,7 +129,7 @@ const SignIn: React.FC = () => {
           placeholder="Select Role"
         />
         <View style={{ paddingHorizontal: 16 }}>
-          {role === 'Teacher' ? (
+          {role === "Teacher" ? (
             <View style={{ gap: 16 }}>
               <InputEmail
                 label="Email"
@@ -144,6 +164,12 @@ const SignIn: React.FC = () => {
               />
             </View>
           )}
+          {/* <Button title='Forgot Password?' style={{ margin: 0, justifyContent: 'end', ali }} onPress={() => router.push('/')} /> */}
+          <TouchableOpacity>
+            <ThemedText style={{ fontWeight: 500, textAlign: "right" }}>
+              Forgot Password?
+            </ThemedText>
+          </TouchableOpacity>
           <Button
             title="Sign In"
             variant="primary"
@@ -160,23 +186,23 @@ const SignIn: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   titleContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 60,
   },
   imagePlaceholder: {
     width: 100,
     height: 100,
     borderRadius: 100,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginBottom: 20,
   },
   signInAsText: {
     marginBottom: 4,
     marginLeft: 20,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

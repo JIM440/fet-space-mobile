@@ -69,12 +69,11 @@ const Courses: React.FC = () => {
       <PageContainers>
         <TabHeader />
         <View style={[styles.errorContainer, { backgroundColor: colors.backgroundMain }]}>
-          <ThemedText style={[styles.errorText, { color: colors.error }]}>
+          <ThemedText style={[styles.errorText ]}>
             Error: {error?.message || 'Failed to load courses'}
           </ThemedText>
           <Button
             title="Retry"
-            variant="primary"
             onPress={() => refetch()}
             style={styles.retryButton}
           />

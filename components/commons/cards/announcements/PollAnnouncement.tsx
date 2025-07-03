@@ -3,6 +3,8 @@ import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
 import { useRespondPoll } from "@/hooks/api/polls";
 import { useTheme } from "@/hooks/useThemeColor";
+import { getTimeAgo } from "@/utils/dateFormatter";
+import { useQueryClient } from "@tanstack/react-query";
 import { router, usePathname } from "expo-router";
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
@@ -22,6 +24,9 @@ interface PollAnnouncementProps {
   announcementType: "general" | "course";
   pollId: number;
   announcementId: number;
+  userId: number;
+  isAdmin?: boolean;
+  hasVoted?: boolean;
 }
 
 const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
@@ -34,20 +39,21 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
   options,
   totalVotes,
   allowMultipleAnswers,
-  index,
   announcementType,
   pollId,
   announcementId,
+  userId,
+  hasVoted,
 }) => {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
   const [pollSelections, setPollSelections] = useState<string[]>([]);
   const { mutate: respondPoll, isPending } = useRespondPoll(announcementId);
+  const queryClient = useQueryClient();
 
   const isAnnouncementDetailPath =
-    pathname.includes("/announcement/") ||
-    pathname.includes("/course-announcement");
+    pathname.includes("/announcement/") || pathname.includes("/announcement");
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -59,19 +65,23 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
       if (allowMultipleAnswers) {
         if (prev.includes(optionText)) {
           return prev.filter((opt) => opt !== optionText);
-        } else {
-          return [...prev, optionText];
         }
-      } else {
-        if (prev.includes(optionText)) {
-          return [];
-        } else {
-          return [optionText];
-        }
+        return [...prev, optionText];
       }
+      return [optionText];
     });
 
-    respondPoll({ pollId, optionId });
+    respondPoll(
+      { pollId, optionId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["pollResponses", pollId],
+          });
+          queryClient.invalidateQueries({ queryKey: ["announcements"] });
+        },
+      }
+    );
   };
 
   return (
@@ -79,23 +89,23 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
       style={[styles.item, { backgroundColor: colors.backgroundMain }]}
       onPress={() => {
         router.push({
-  pathname: announcementType === "course"
-    ? "/course-announcement/[id]"
-    : "/announcement/[id]",
-  params: { id: id.toString() },
-});
-
+          pathname:
+            announcementType === "course"
+              ? "/course-announcement/[id]"
+              : "/announcement/[id]",
+          params: { id: id.toString() },
+        });
       }}
       disabled={isAnnouncementDetailPath}
     >
       <View style={styles.header}>
         <Image
-          source={require("@/assets/images/candace_owens.jpg")}
+          source={announcementType === 'course' ?  require('@/assets/images/fozin.jpg') : require('@/assets/images/valerie.jpg')}
           style={{ ...styles.badge, backgroundColor: colors.backgroundNeutral }}
         />
         <View>
           <ThemedText variant="h4">{author.name}</ThemedText>
-          <ThemedText variant="small">{formatDate(date)}</ThemedText>
+          <ThemedText variant="small">{getTimeAgo(date)}</ThemedText>
         </View>
       </View>
       <View>
@@ -113,12 +123,17 @@ const PollAnnouncement: React.FC<PollAnnouncementProps> = ({
         {options.map((option, optIndex) => (
           <PollOption
             key={optIndex}
-            option={{ ...option, votes: option.votes }}
+            option={{
+              text: option.text,
+              votes: option.votes,
+              optionId: option.optionId,
+            }}
             totalVotes={totalVotes}
-            isSelected={pollSelections.includes(option.text)}
+            isSelected={pollSelections.includes(option.text) || !!hasVoted}
             allowMultipleAnswers={allowMultipleAnswers}
             onSelect={() => handlePollSelection(option.text, option.optionId)}
             colors={colors}
+            userId={userId}
           />
         ))}
       </View>

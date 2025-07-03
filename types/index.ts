@@ -32,12 +32,14 @@ export interface roleType {
 // files
 export interface fileProps {
   id?: string | number;
-  name: string;
-  type: "pdf" | "docx" | "ppt" | "img" | string;
+  name?: string;
   date?: string;
   size: string;
-  pages: string | number;
+  pages?: string | number;
+  type: "pdf" | "docx" | "img" | "ppt" | "video"; // Expanded to include video
+  url: string; // For download/viewing
 }
+
 // assignments
 export interface assignmentProps {
   id?: string | number;
@@ -84,11 +86,22 @@ export interface RegularAnnouncementProps {
   author: { name: string; image: string };
 }
 
+// types/index.ts
 export interface Comment {
-  comment_id: number;
-  content: string;
-  user: { name: string; role: string };
-  created_at: string;
+  comment_id: number; // Maps to comment_id
+  content: string; // Maps to content
+  user: {
+    user_id: number;
+    name: string; // Maps to user.name
+    image?: string; // Optional, as it's not in the provided data
+    email?: string; // Optional, from user.email
+    phone_number?: string; // Optional, from user.phone_number
+  };
+  created_at: string; // Maps to created_at
+  user_id: number; // Maps to user_id
+  general_announcement_id?: number; // Optional, from general_announcement_id
+  course_announcement_id?: number; // Optional, from course_announcement_id
+  assignment_id?: number; // Optional, from assignment_id
 }
 
 

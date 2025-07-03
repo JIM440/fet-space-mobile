@@ -43,7 +43,12 @@ const Profile: React.FC = () => {
     return (
       <PageContainers>
         <TabHeader />
+        <View style={styles.profileHeader}>
+          <ThemedText variant="h3">Profile</ThemedText>
+          <MoreItemsButton onPress={toggleModal} />
+        </View>
         <FullPageSpinner />
+        <ProfileOptionsModal visible={modalVisible} onClose={toggleModal} />
       </PageContainers>
     );
   }
@@ -52,6 +57,10 @@ const Profile: React.FC = () => {
     return (
       <PageContainers>
         <TabHeader />
+        <View style={styles.profileHeader}>
+          <ThemedText variant="h3">Profile</ThemedText>
+          <MoreItemsButton onPress={toggleModal} />
+        </View>
         <View
           style={[
             styles.errorContainer,
@@ -59,10 +68,11 @@ const Profile: React.FC = () => {
           ]}
         >
           <ThemedText style={[styles.errorText]}>
-            {('Error:' + error?.message) || "Failed to load profile"}
+            {"Error:" + error?.message || "Failed to load profile"}
           </ThemedText>
           <Button title="Retry" onPress={() => refetch()} />
         </View>
+        <ProfileOptionsModal visible={modalVisible} onClose={toggleModal} />
       </PageContainers>
     );
   }
@@ -91,7 +101,7 @@ const Profile: React.FC = () => {
               ]}
             >
               <Image
-                source={require("@/assets/images/candace_owens.jpg")}
+                source={require("@/assets/images/jim.jpg")}
                 style={[
                   styles.profileImage,
                   { backgroundColor: colors.backgroundNeutral },

@@ -4,12 +4,13 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface PollOptionProps {
-  option: { text: string; votes: number };
+  option: { text: string; votes: number; optionId: number };
   totalVotes: number;
   isSelected: boolean;
   allowMultipleAnswers: boolean;
   onSelect: () => void;
   colors: any;
+  userId: number;
 }
 
 const PollOption: React.FC<PollOptionProps> = ({
@@ -19,6 +20,7 @@ const PollOption: React.FC<PollOptionProps> = ({
   allowMultipleAnswers,
   onSelect,
   colors,
+  userId,
 }) => {
   const percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
 

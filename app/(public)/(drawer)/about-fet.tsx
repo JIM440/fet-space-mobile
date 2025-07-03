@@ -2,7 +2,6 @@ import PageContainers from "@/components/commons/containers/PageContainer";
 import BackHeader from "@/components/commons/navigation/BackHeader";
 import ThemedText from "@/components/commons/typography/ThemedText";
 import { COLORS } from "@/constants/colors";
-import { administration } from "@/constants/static-data/admins";
 import { departments } from "@/constants/static-data/departments";
 import { useTheme } from "@/hooks/useThemeColor";
 import { Feather } from "@expo/vector-icons";
@@ -22,6 +21,39 @@ type DepartmentKeys =
   | "computer"
   | "civil"
   | "petroleum";
+
+const administration = [
+  {
+    name: "Prof. Agbor Dieudonne Agbor",
+    role: "Dean",
+    imageUri: require("@/assets/images/admins/dean.jpg"),
+  },
+  {
+    name: "Dr. Nde Nguti",
+    role: "Vice Dean",
+    imageUri: require("@/assets/images/admins/nguti.jpg"),
+  },
+  {
+    name: "Dr. Nkemeni Valerie",
+    role: "HOD of Electrical Department",
+    imageUri: require("@/assets/images/admins/valerie.jpg"),
+  },
+  {
+    name: "Prof. Elie Fute",
+    role: "HOD of Computer Department",
+    imageUri: require("@/assets/images/admins/fute.jpg"),
+  },
+  {
+    name: "Dr. Sop Leonel",
+    role: "Coordinator of Computer Engineering",
+    imageUri: require("@/assets/images/admins/sop.jpg"),
+  },
+  {
+    name: "Dr. Fozin",
+    role: "Lecturer",
+    imageUri: require("@/assets/images/admins/fozin.jpg"),
+  },
+];
 
 const AboutFET = () => {
   const { width, height } = Dimensions.get("screen");
@@ -50,10 +82,12 @@ const AboutFET = () => {
       <BackHeader title="About FET" />
       <ScrollView style={{ width: "100%" }}>
         <Image
-          source={{ uri: "https://via.placeholder.com/400x200" }} // Replace with actual FET image URI or asset
+          source={{
+            uri: "https://www.camexamen.com/wp-content/uploads/2018/08/Fet-picture.jpg",
+          }} // Replace with actual FET image URI or asset
           style={{
             width: width,
-            height: 200,
+            height: 220,
             resizeMode: "cover",
             backgroundColor: colors.backgroundNeutral,
           }}
@@ -79,14 +113,15 @@ const AboutFET = () => {
             History
           </ThemedText>
           <ThemedText style={{ marginBottom: 16 }}>
-            Founded in 1970, the Pioneer Institute of Engineering has grown from
-            a small technical college into a globally recognized leader in
-            engineering education. In 1985, we launched the nation’s first
-            undergraduate program in Renewable Energy Engineering. Our alumni
-            include Dr. Maria Chen, who developed the world’s first scalable
-            solar microgrid, and in 2023, we earned ABET accreditation for all
-            programs. Today, we rank #12 in national engineering schools by
-            [Fictional Ranking Source].
+            The Faculty of Engineering and Technology is one of the
+            establishments of the University of Buea. Created in 1993 with the
+            creation of the University, it opened its doors to the first
+            students in 2010, featuring four degree programs: Bachelor of
+            Science in Engineering in Power Systems, Telecommunications Systems,
+            Software Engineering and Network and Security. Currently, the
+            Faculty has five departments with over each featuring at least one
+            degree program. Postgraduate programs have enabled the Faculty to
+            train more of its manpower.
           </ThemedText>
 
           <ThemedText
@@ -102,11 +137,13 @@ const AboutFET = () => {
             Mission
           </ThemedText>
           <ThemedText style={{ marginBottom: 16 }}>
-            At the Pioneer Institute of Engineering, our mission is to empower
-            future engineers with the knowledge, skills, and creativity to
-            tackle global challenges. Through rigorous education, hands-on
-            innovation, and a commitment to diversity, we prepare students to
-            lead in a rapidly evolving technological world.
+            In fulfilment of its vision, the Faculty of Engineering and
+            Technology trains a diverse pool of students to become future
+            engineers and engineering leaders, capable of sustainable
+            self-employment. Integrate quality Assessment in teaching /research
+            programmes Seek collaboration with international and national
+            leaders in engineering training Vigorously impact the
+            entrepreneurial spirit in our students
           </ThemedText>
 
           <ThemedText
@@ -122,11 +159,13 @@ const AboutFET = () => {
             Vision
           </ThemedText>
           <ThemedText style={{ marginBottom: 16 }}>
-            At the Pioneer Institute of Engineering, our mission is to empower
-            future engineers with the knowledge, skills, and creativity to
-            tackle global challenges. Through rigorous education, hands-on
-            innovation, and a commitment to diversity, we prepare students to
-            lead in a rapidly evolving technological world.
+            The Faculty of Engineering and Technology (FET) will be an impactful
+            institution that excels in knowledge creation, propagation and
+            application across a spectrum of engineering disciplines using
+            traditional and leading-edge teaching technologies and methods,
+            whose graduates will respond to the national and sub-regional
+            development needs and competing successfully in the global job
+            market.
           </ThemedText>
 
           <ThemedText
@@ -181,15 +220,26 @@ const AboutFET = () => {
           <View style={styles.adminContainer}>
             {administration.map((admin, index) => (
               <View key={index} style={styles.adminCard}>
+                {/* {console.log(admin.imageUri)} */}
                 <Image
-                  source={{ uri: admin.imageUri }}
+                  source={admin.imageUri}
                   style={{
                     ...styles.adminImage,
                     backgroundColor: colors.backgroundNeutral,
                   }}
                 />
-                <ThemedText style={{ marginTop: 8 }}>{admin.name}</ThemedText>
-                <ThemedText style={{ color: colors.neutralTextSecondary }}>
+                <ThemedText
+                  variant="h4"
+                  style={{ marginTop: 8, textAlign: "center" }}
+                >
+                  {admin.name}
+                </ThemedText>
+                <ThemedText
+                  style={{
+                    color: colors.neutralTextSecondary,
+                    textAlign: "center",
+                  }}
+                >
                   {admin.role}
                 </ThemedText>
               </View>
@@ -235,7 +285,7 @@ const styles = StyleSheet.create({
   },
   adminImage: {
     width: "100%",
-    height: 150,
+    height: 200,
     borderRadius: 6,
   },
 });

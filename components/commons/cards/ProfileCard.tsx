@@ -31,7 +31,7 @@ const ProfileCard = ({
         <ThemedText variant="h4">{user.name}</ThemedText>
         {type === "student" && (
           <ThemedText style={{ color: colors.neutralTextTertiary }}>
-            {user.matricule}
+            {user.matricule_number}
           </ThemedText>
         )}
       </View>

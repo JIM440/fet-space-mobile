@@ -1,3 +1,4 @@
+import api from '@/constants/appBaseUrl';
 import { login, logout, refreshTokens } from '@/utils/api/auth/index';
 import { useMutation } from '@tanstack/react-query';
 
@@ -54,5 +55,17 @@ export const useRefreshTokens = () => {
     onError: (error) => {
       console.error('Error during token refresh:', error);
     },
+  });
+};
+
+
+const changePassword = async ({ currentPassword, newPassword, confirmPassword }: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
+  const response = await api.post('/auth/change-password', { currentPassword, newPassword, confirmPassword });
+  return response.data;
+};
+
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: changePassword,
   });
 };

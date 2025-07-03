@@ -1,5 +1,4 @@
 import { useGetNotifications } from "@/hooks/api/notifications";
-import { useAuth } from "@/hooks/useAuth";
 import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
@@ -11,15 +10,13 @@ import { useTheme } from "../../../hooks/useThemeColor";
 const TabHeader = () => {
   const { resolvedTheme } = useTheme();
   const navigation = useNavigation();
-  const { user } = useAuth();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
 
-// Fetch notifications and select unread count
-  const { data: unreadCount = 0 } = useGetNotifications({
-    select: (data) => data.notifications.filter((n) => !n.read).length,
-    enabled: !!user,
-  });
+  // Fetch notifications
+  const { data, isError } = useGetNotifications();
 
+  // Calculate unread count from returned data
+  const unreadCount = data?.filter((n) => !n.read).length ?? 0;
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -32,6 +29,7 @@ const TabHeader = () => {
         paddingHorizontal: 20,
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
         backgroundColor: colors.backgroundMain,
       }}
     >
@@ -58,7 +56,8 @@ const TabHeader = () => {
         <FontAwesome6
           name="bell"
           size={20}
-          color={colors.neutralTextSecondary}
+          color={isError ? colors.error : colors.neutralTextSecondary}
+          accessibilityLabel={`Notifications, ${unreadCount} unread`}
         />
         {unreadCount > 0 && (
           <View
@@ -75,7 +74,7 @@ const TabHeader = () => {
             }}
           >
             <Text style={{ fontSize: 10, color: colors.white }}>
-              {unreadCount}
+              {unreadCount > 99 ? "99+" : unreadCount}
             </Text>
           </View>
         )}

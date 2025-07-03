@@ -21,15 +21,15 @@ const CourseCard = ({ course }: { course: courseProps }) => {
         // alignItems: 'flex-start'
       }}
       onPress={() => {
-        router.push(`/course/${course.id}` as RelativePathString);
+        router.push(`/course/${course.course.course_id}` as RelativePathString);
       }}
     >
       {/* <View style={{flex: 1}}> */}
       <ThemedText variant="h4">
-        {course.courseCode + ": " + course.title}
+        {course.course.code + ": " + course.course.title}
       </ThemedText>
       <ThemedText variant="caption" numberOfLines={1}>
-        {course.instructor}
+        {course.course.teacher.user.name}
       </ThemedText>
       {/* </View> */}
       {/* <MoreItemsButton onPress={()=>{alert(course.title)}} /> */}

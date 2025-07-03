@@ -1,15 +1,13 @@
 import { BASE_URL, student_role } from "@/constants";
-import { useAuth } from "@/hooks/useAuth";
 import { Assignment, roleType, Student } from "@/types";
 import {
-  getDeadlines,
   getStudentCourses,
   getStudentDeadlines,
   getStudentDetails,
+  getUpcomingDeadlines,
   joinCourse,
 } from "@/utils/api/student";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 interface Course {
@@ -62,58 +60,13 @@ export const useGetStudentDeadlines = (role: roleType) => {
   });
 };
 
-
-export const useGetDeadlines = () => {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const [deadlines, setDeadlines] = useState<Assignment[]>([]);
-
-  const query = useQuery({
-    queryKey: ['deadlines'],
-    queryFn: getDeadlines,
-    enabled: user?.role === 'Student',
+export const useGetDeadlines = (studentId: number) => {
+  console.log(studentId)
+  return useQuery({
+    queryKey: ['upcomingDeadlines', studentId],
+    queryFn: () => getUpcomingDeadlines(studentId),
+    enabled: !!studentId, // Only fetch if studentId is valid
   });
-
-  useEffect(() => {
-    if (user?.role !== 'Student') return;
-
-    socket.connect();
-
-    getStudentCourses().then((courses) => {
-      courses.forEach((course: any) => {
-        socket.emit('joinRoom', `course_${course.course_id}`);
-      });
-    });
-
-    socket.on('newAssignment', (data: SocketAssignmentEvent) => {
-      setDeadlines((prev) => [...prev, data.assignment]);
-    });
-
-    socket.on('updateAssignment', (data: SocketAssignmentEvent) => {
-      setDeadlines((prev) =>
-        prev.map((ass) => (ass.id === data.assignment.id ? data.assignment : ass))
-      );
-    });
-
-    socket.on('deleteAssignment', (data: { assignment_id: number }) => {
-      setDeadlines((prev) => prev.filter((ass) => ass.id !== data.assignment_id));
-    });
-
-    return () => {
-      socket.off('newAssignment');
-      socket.off('updateAssignment');
-      socket.off('deleteAssignment');
-      socket.disconnect();
-    };
-  }, [queryClient, user]);
-
-  useEffect(() => {
-    if (query.data) {
-      setDeadlines(query.data);
-    }
-  }, [query.data]);
-
-  return { ...query, deadlines };
 };
 
 

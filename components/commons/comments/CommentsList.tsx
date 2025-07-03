@@ -44,10 +44,13 @@ const CommentList: React.FC<CommentListProps> = ({ comments, isLoading, isError,
     <ScrollView style={{ marginBottom: 16, paddingHorizontal: 20 }}>
       {comments.length > 0 ? (
         comments.map((comment) => (
-          <CommentCard key={comment.id} comment={comment} />
+          <CommentCard
+            key={comment.comment_id} // Use comment_id as the unique key
+            comment={comment}
+          />
         ))
       ) : (
-        <ThemedText style={{ color: colors.neutralTextSecondary, textAlign: 'center' }}>
+        <ThemedText style={{ color: colors.neutralTextSecondary, textAlign: 'center', paddingVertical: 20 }}>
           No comments yet
         </ThemedText>
       )}

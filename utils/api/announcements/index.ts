@@ -89,30 +89,20 @@ export const getGeneralAnnouncements = async ({
 };
 
 // Fetch course announcements
-export const getCourseAnnouncements = async ({
-  courseId,
-  page = 1,
-  limit = 10,
-}: FetchAnnouncementsParams): Promise<PaginatedAnnouncements> => {
-  try {
-    const response = await api.get('/announcements/course', {
-      params: { courseId, page, limit },
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error('Failed to fetch course announcements:', error);
-    throw error;
-  }
+export const getCourseAnnouncements = async (
+  courseId: number,
+  page: number = 1,
+  limit: number = 10
+): Promise<any[]> => {
+  const response = await api.get(`/announcements/course/`, {
+    params: { courseId, page, limit },
+  });
+  return response.data;
 };
 
-export const getCourseAnnouncementDetails = async (announcementId: number): Promise<Announcement> => {
-  try {
-    const response = await api.get(`/announcements/course/${announcementId}`);
-    return response.data;
-  } catch (error: any) {
-    console.error('Failed to fetch announcement details:', error);
-    throw error;
-  }
+export const getCourseAnnouncementDetails = async (announcementId: number): Promise<any> => {
+  const response = await api.get(`/announcements/course/${announcementId}`);
+  return response.data;
 };
 
 export const getGeneralAnnouncementDetails = async (announcementId: number): Promise<Announcement> => {

@@ -6,7 +6,13 @@ import { COLORS } from "@/constants/colors";
 import { useJoinCourse } from "@/hooks/api/student"; // Adjust import path as needed
 import { useTheme } from "@/hooks/useThemeColor";
 import React, { useState } from "react";
-import { ActivityIndicator, Dimensions, Modal, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Modal,
+  StyleSheet,
+  View,
+} from "react-native";
 
 interface JoinCourseModalProps {
   visible: boolean;
@@ -76,7 +82,7 @@ const JoinCourseModal: React.FC<JoinCourseModalProps> = ({
         </ThemedText>
         <ThemedInput
           label="Code"
-          placeholder="Enter code"
+          placeholder="Enter code e.g. YERCEF"
           value={joinCode}
           onChangeText={setJoinCode}
           error={error}
@@ -92,7 +98,13 @@ const JoinCourseModal: React.FC<JoinCourseModalProps> = ({
           </ThemedText>
         )}
         <Button
-          title={isPending ? <ActivityIndicator color={colors.white} /> : "Join Course"}
+          title={
+            isPending ? (
+              <ActivityIndicator color={colors.white} />
+            ) : (
+              "Join Course"
+            )
+          }
           variant="primary"
           disabled={joinCode.length === 0 || isPending}
           style={{ marginTop: 20 }}
@@ -106,8 +118,8 @@ const JoinCourseModal: React.FC<JoinCourseModalProps> = ({
 const styles = StyleSheet.create({
   modalView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "red", // Replace with actual background color or remove
     padding: 20,
     paddingBottom: 100,

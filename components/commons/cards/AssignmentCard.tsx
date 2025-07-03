@@ -19,7 +19,7 @@ const AssignmentCard = ({ assignment }: { assignment: assignmentProps }) => {
         borderColor: colors.neutralBorder,
       }}
       onPress={() => {
-        router.push(`/assignment/${assignment.id}` as RelativePathString);
+        router.push(`/assignment/${assignment.assignment_id}` as RelativePathString);
       }}
     >
       <View

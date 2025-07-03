@@ -15,7 +15,7 @@ const Notifications = () => {
   const { resolvedTheme } = useTheme();
   const colors = resolvedTheme === "light" ? COLORS.light : COLORS.dark;
   const { user } = useContext(AuthContext);
-  const { notifications, isLoading, isError, error, refetch } =
+  const { data: notifications, isLoading, isError, error, refetch } =
     useGetNotifications();
 
   if (!user) {
@@ -58,7 +58,6 @@ const Notifications = () => {
           </ThemedText>
           <Button
             title="Retry"
-            variant="primary"
             onPress={() => refetch()}
             style={styles.retryButton}
           />
@@ -101,7 +100,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   errorText: {
-    fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
   },

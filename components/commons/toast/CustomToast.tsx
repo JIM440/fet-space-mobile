@@ -22,11 +22,11 @@ const CustomToast: React.FC<CustomToastProps> = ({
   const getToastStyle = () => {
     switch (type) {
       case "success":
-        return { borderColor: colors.error };
+        return { borderColor: colors.success };
       case "error":
         return { borderColor: colors.error };
       case "info":
-        return { borderColor: colors.error };
+        return { borderColor: colors.primaryBase };
       default:
         return { borderColor: colors.error };
     }

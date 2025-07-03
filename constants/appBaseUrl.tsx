@@ -13,12 +13,18 @@ export const api = axios.create({
 
 // Request Interceptor: Attach Bearer token to requests
 api.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    const token = getTokenFromStorage(ACCESS_TOKEN_KEY);
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config: AxiosRequestConfig) => { 
+    try {
+      const token = await getTokenFromStorage(ACCESS_TOKEN_KEY);
+      console.log('token', token);
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`; // Correct template literal syntax
+      }
+      return config;
+    } catch (error) {
+      console.error("Error in request interceptor:", error);
+      return Promise.reject(error);  // Propagate the error
     }
-    return config;
   },
   (error) => Promise.reject(error)
 );
@@ -37,14 +43,14 @@ api.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
-        const { accessToken, refreshToken } = await refreshTokens();
-        if (!accessToken) throw new Error("No access token after refresh");
+        const data = await refreshTokens();
+        if (!data.accessToken) throw new Error("No access token after refresh");
 
-        setTokenInStorage(ACCESS_TOKEN_KEY, accessToken)
-        setTokenInStorage(REFRESH_TOKEN_KEY, refreshToken)
+        setTokenInStorage(ACCESS_TOKEN_KEY, data.accessToken)
+        setTokenInStorage(REFRESH_TOKEN_KEY, data.refreshToken)
 
         // Fix: Remove 'Bearer ' prefix if your backend expects raw token
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return api(originalRequest);
       } catch (refreshError: any) {
         if (refreshError.response?.status === 401) {
